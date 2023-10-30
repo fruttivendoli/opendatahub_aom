@@ -1,4 +1,4 @@
-package it.unibz.parser;
+package it.unibz.utils;
 
 
 import java.io.BufferedReader;
