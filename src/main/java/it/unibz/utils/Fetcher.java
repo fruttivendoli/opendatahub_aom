@@ -7,9 +7,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class Fetcher {
+public abstract class Fetcher {
 
-    public static String fetch(String url) throws IOException {
+    protected String fetch(String url) throws IOException {
         //Fetch Swagger JSON from endpoint
         URL _url = new URL(url);
         HttpURLConnection connection = (HttpURLConnection) _url.openConnection();
