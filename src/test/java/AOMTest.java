@@ -9,8 +9,8 @@ public class AOMTest {
     @Test
     public void basicAomStructure() throws AOMException {
         EntityType person = new EntityType("person");
-        person.addPropertyType(new PropertyType("name", String.class));
-        person.addPropertyType(new PropertyType("age", Integer.class));
+        person.addPropertyType(new PropertyType("name", String.class, true, true));
+        person.addPropertyType(new PropertyType("age", Integer.class, true, true));
 
         Entity jeff = person.create();
 
@@ -25,8 +25,8 @@ public class AOMTest {
     @Test
     public void testSetNonExisting() {
         EntityType person = new EntityType("Person");
-        person.addPropertyType(new PropertyType("name", String.class));
-        person.addPropertyType(new PropertyType("age", Integer.class));
+        person.addPropertyType(new PropertyType("name", String.class, true, true));
+        person.addPropertyType(new PropertyType("age", Integer.class, true, true));
 
         Entity jeff = person.create();
         assertThrows(AOMException.class , () -> jeff.setProperty("height", 1.8));
@@ -35,8 +35,8 @@ public class AOMTest {
     @Test
     public void testSetWrongType() {
         EntityType person = new EntityType("Person");
-        person.addPropertyType(new PropertyType("name", String.class));
-        person.addPropertyType(new PropertyType("age", Integer.class));
+        person.addPropertyType(new PropertyType("name", String.class, true, true));
+        person.addPropertyType(new PropertyType("age", Integer.class, true, true));
 
         Entity jeff = person.create();
         assertThrows(AOMException.class , () -> jeff.setProperty("age", "Jeff"));

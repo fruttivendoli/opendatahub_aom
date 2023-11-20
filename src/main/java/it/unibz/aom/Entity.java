@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Entity {
-    private EntityType type;
-    private Map<String, Property> properties;
+    private final EntityType type;
+    private final Map<String, Property> properties;
 
     public Entity(EntityType type) {
         this.type = type;
@@ -18,12 +18,16 @@ public class Entity {
         }
         PropertyType _type = type.getPropertyType(name);
         if (!_type.isCompatibleWith(value)) {
-            throw new AOMException("Property \"" + name + "\" is not of type \"" + _type.getType().getName() + "\"");
+            throw new AOMException("Property \"" + name + "\" is not of type \"" + _type.getSimpleType().getName() + "\"");
         }
         if(properties.containsKey(name))
             properties.get(name).setValue(value);
-        else
-            properties.put(name,  new Property(name, _type));
+        else {
+            PropertyType propertyType = type.getPropertyType(name);
+            if (propertyType == null)
+                throw new AOMException("Property \"" + name + "\" does not exist in entity type \"" + type.getName() + "\"");
+            properties.put(name, new Property(propertyType, _type));
+        }
 
     }
 
