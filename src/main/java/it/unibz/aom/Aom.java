@@ -22,4 +22,16 @@ public class Aom {
         entityRelationships.add(entityRelationship);
     }
 
+    public boolean hasEntityType(String name) {
+        return entityTypes.containsKey(name);
+    }
+
+    public EntityType getEntityType(String name) {
+        return entityTypes.get(name);
+    }
+
+    public void addEntityRelationship(EntityType from, EntityType to) {
+        entityRelationships.add(new EntityRelationship(from, to));
+    }
+
 }

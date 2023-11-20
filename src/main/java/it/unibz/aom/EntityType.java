@@ -38,19 +38,28 @@ public class EntityType {
         EntityType _entityType = new EntityType(name);
         ObjectNode properties = (ObjectNode) entityType.get(objName);
         System.out.println("Parsing entity type: " + name);
+        System.out.println(properties);
         aom.addEntityType(_entityType);
         properties.fieldNames().forEachRemaining(propertyName -> {
             System.out.println("    Parsing property: " + propertyName);
             ObjectNode property = (ObjectNode) properties.get(propertyName);
-            if (property.get("type").asText().equals("object")) {
-                parseEntityTypes(aom, propertyName, property, "additionalProperties");
-                aom.addEntityRelationship(new EntityRelationship(
-                        _entityType,
-                        aom.entityTypes.get(propertyName)
-                ));
+            if (property.has("$ref")) {
+                String ref = property.get("$ref").asText();
+                if (ref.startsWith("#/components/schemas/")) {
+                    String refName = ref.substring("#/components/schemas/".length());
+                    if (aom.hasEntityType(refName)) {
+                        EntityType otherType = aom.getEntityType(refName);
+                        if(otherType == null) {
+                            //todo: handle this
+                        }
+                        aom.addEntityRelationship(_entityType, otherType);
+                    }
+                }
             } else {
                 PropertyType propertyType = PropertyType.createPropertyType(propertyName, property);
-                _entityType.addPropertyType(propertyType);
+                if(propertyType != null) {
+                    _entityType.addPropertyType(propertyType);
+                }
             }
         });
     }

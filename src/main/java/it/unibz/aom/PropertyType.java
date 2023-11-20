@@ -38,7 +38,19 @@ public class PropertyType {
 
 
     public static PropertyType createPropertyType(String name, ObjectNode property) {
+        if(property.get("type") == null) {
+            //todo: wtf do we do here??
+            return null;
+        }
         String typeStr = property.get("type").asText();
+        if("object".equals(typeStr)) {
+            // todo: parse additionalProperties Fields
+            return null;
+        }
+        if("array".equals(typeStr)) {
+            //todo: handle arrays
+            return null;
+        }
         boolean nullable = property.has("nullable") && property.get("nullable").asBoolean();
         boolean readOnly = property.has("readOnly") && property.get("readOnly").asBoolean();
 
