@@ -26,7 +26,7 @@ public class Entity {
             PropertyType propertyType = type.getPropertyType(name);
             if (propertyType == null)
                 throw new AOMException("Property \"" + name + "\" does not exist in entity type \"" + type.getName() + "\"");
-            properties.put(name, new Property(propertyType, _type));
+            properties.put(name, new Property(propertyType, value));
         }
 
     }
