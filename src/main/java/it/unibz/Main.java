@@ -2,7 +2,6 @@ package it.unibz;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import it.unibz.aom.Aom;
-import it.unibz.utils.AomBuilder;
 import it.unibz.utils.JsonFetcher;
 
 import java.io.IOException;
@@ -21,6 +20,5 @@ public class Main {
         ObjectNode swagger = new JsonFetcher().fetchSwagger(url);
         System.out.println("Swagger fetched successfully!");
 
-        Aom aom = AomBuilder.populateAOM(swagger);
     }
 }

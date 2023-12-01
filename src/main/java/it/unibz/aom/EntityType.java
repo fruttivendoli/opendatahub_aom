@@ -69,7 +69,6 @@ public class EntityType {
                         if(otherType == null) {
                             //todo: handle this
                         }
-                        aom.addEntityRelationship(_entityType, otherType);
                     }
                 }
             } else {

@@ -7,7 +7,6 @@ public class Aom {
 
     public String title, description;
     public HashMap<String, EntityType> entityTypes = new HashMap<>();
-    public LinkedList<EntityRelationship> entityRelationships = new LinkedList<>();
 
     public Aom(String title, String description) {
         this.title = title;
@@ -18,20 +17,12 @@ public class Aom {
         entityTypes.put(entityType.getName(), entityType);
     }
 
-    public void addEntityRelationship(EntityRelationship entityRelationship) {
-        entityRelationships.add(entityRelationship);
-    }
-
     public boolean hasEntityType(String name) {
         return entityTypes.containsKey(name);
     }
 
     public EntityType getEntityType(String name) {
         return entityTypes.get(name);
-    }
-
-    public void addEntityRelationship(EntityType from, EntityType to) {
-        entityRelationships.add(new EntityRelationship(from, to));
     }
 
 }

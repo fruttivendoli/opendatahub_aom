@@ -2,7 +2,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import it.unibz.aom.Aom;
 import it.unibz.aom.EntityType;
-import it.unibz.utils.AomBuilder;
+import it.unibz.aom.PropertyType;
+import it.unibz.parser.Parser;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +31,7 @@ public class JsonParserTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        aom = AomBuilder.populateAOM(swagger);
+        aom = new Parser(swagger).getAom();
     }
 
     @Test
@@ -44,7 +45,29 @@ public class JsonParserTest {
         EntityType accoBadge = aom.getEntityType("AccoBadges");
         assertEquals("AccoBadges", accoBadge.getName());
         assertTrue(accoBadge.hasPropertyType("Id"));
+        assertEquals("Id", accoBadge.getPropertyType("Id").getName());
+        PropertyType id = accoBadge.getPropertyType("Id");
+        assertEquals(String.class, id.getSimpleType());
         assertTrue(accoBadge.hasPropertyType("Self"));
+        assertEquals("Self", accoBadge.getPropertyType("Self").getName());
+        PropertyType self = accoBadge.getPropertyType("Self");
+        assertEquals(String.class, self.getSimpleType());
+    }
+
+    @Test
+    public void testArrayParser() {
+        EntityType accoFeature = aom.getEntityType("AccoFeature");
+        assertEquals("AccoFeature", accoFeature.getName());
+        assertTrue(accoFeature.hasPropertyType("RoomAmenityCodes"));
+        assertEquals("RoomAmenityCodes", accoFeature.getPropertyType("RoomAmenityCodes").getName());
+        PropertyType roomAmenityCodes = accoFeature.getPropertyType("RoomAmenityCodes");
+        assertEquals(Integer[].class, roomAmenityCodes.getSimpleType());
+    }
+
+    @Test
+    public void testAccountability() {
+        EntityType accommodationRoomLinked = aom.getEntityType("AccommodationRoomLinked");
+        assertNotNull(accommodationRoomLinked.getAccountabilityType("LicenseInfo").getAccountedType());
     }
 
 }
