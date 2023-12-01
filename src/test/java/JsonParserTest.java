@@ -30,7 +30,6 @@ public class JsonParserTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-System.out.println(swagger);
         aom = AomBuilder.populateAOM(swagger);
     }
 

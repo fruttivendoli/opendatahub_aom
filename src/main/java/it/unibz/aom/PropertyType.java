@@ -39,16 +39,12 @@ public class PropertyType {
 
     public static PropertyType createPropertyType(String name, ObjectNode property) {
         if(property.get("type") == null) {
-            //todo: wtf do we do here??
+            //todo: what do we do here??
             return null;
         }
         String typeStr = property.get("type").asText();
         if("object".equals(typeStr)) {
             // todo: parse additionalProperties Fields
-            return null;
-        }
-        if("array".equals(typeStr)) {
-            //todo: handle arrays
             return null;
         }
         boolean nullable = property.has("nullable") && property.get("nullable").asBoolean();
@@ -72,9 +68,15 @@ public class PropertyType {
             case "byte" -> Byte.class;
             case "char" -> Character.class;
             case "void" -> Void.class;
-            case "array" -> {
-                Class<?> elementType = getSimpleType(items.get("type").asText(), items.has("items") ? (ObjectNode) items.get("items") : null);
-                yield java.lang.reflect.Array.newInstance(elementType, 0).getClass();
+            case "array" -> { //Fixme: this may be not correct
+                System.out.println(items);
+                if(items.has("type")) {
+                    Class<?> elementType = getSimpleType(items.get("type").asText(), items.has("items") ? (ObjectNode) items.get("items") : null);
+                    yield java.lang.reflect.Array.newInstance(elementType, 0).getClass();
+                } else {
+                    //todo: handle array of entities
+                    yield null;
+                }
             }
             default -> null;
         };
