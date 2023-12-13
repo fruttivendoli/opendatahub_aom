@@ -22,7 +22,7 @@ public class PropertyParser implements Parsable{
 
         Class<?> type = SimpleTypeMapper.getSimpleType(jsonObj.get("type").asText());
 
-        PropertyType _type =  new PropertyType(name, type, nullable, readOnly);
+        PropertyType _type = new PropertyType(name, type, nullable, readOnly);
         entityType.addPropertyType(_type);
     }
 

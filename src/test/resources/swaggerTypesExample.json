@@ -11350,5 +11350,8 @@
       "name": "Poi",
       "description": "Poi Api (data provided by LTS PoiData) Deprecated! Please use Endpoint ODHActivityPoi"
     }
-  ]
+  ],
+  "paths": {
+    
+  }
 }

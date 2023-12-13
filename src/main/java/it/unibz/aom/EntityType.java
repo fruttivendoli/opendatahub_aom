@@ -50,36 +50,6 @@ public class EntityType {
         return name;
     }
 
-    public static void parseEntityTypes(Aom aom, String name, ObjectNode entityType, String objName) {
-        EntityType _entityType = new EntityType(name);
-        ObjectNode properties = (ObjectNode) entityType.get(objName);
-        System.out.println("Parsing entity type: " + name);
-        System.out.println(properties);
-        aom.addEntityType(_entityType);
-
-        properties.fieldNames().forEachRemaining(propertyName -> {
-            System.out.println("    Parsing property: " + propertyName);
-            ObjectNode property = (ObjectNode) properties.get(propertyName);
-            if (property.has("$ref")) {
-                String ref = property.get("$ref").asText();
-                if (ref.startsWith("#/components/schemas/")) {
-                    String refName = ref.substring("#/components/schemas/".length());
-                    if (aom.hasEntityType(refName)) {
-                        EntityType otherType = aom.getEntityType(refName);
-                        if(otherType == null) {
-                            //todo: handle this
-                        }
-                    }
-                }
-            } else {
-                PropertyType propertyType = PropertyType.createPropertyType(propertyName, property);
-                if(propertyType != null) {
-                    _entityType.addPropertyType(propertyType);
-                }
-            }
-        });
-    }
-
     @Override
     public boolean equals(Object obj) {
         if(obj instanceof EntityType) {

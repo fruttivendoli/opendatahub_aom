@@ -29,7 +29,6 @@ public class ArrayParser implements Parsable{
                         jsonObj.has("readOnly") && jsonObj.get("readOnly").asBoolean()
                 )
         );
-
     }
 
 }

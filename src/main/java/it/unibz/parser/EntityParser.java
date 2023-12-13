@@ -23,11 +23,11 @@ public class EntityParser implements Parsable{
 
         EntityType entityType = new EntityType(name);
         EntityType currentEntityType = parser.getCurrentEntityType();
-        if(currentEntityType == null) {
+
+        if(currentEntityType == null)
             parser.getAom().addEntityType(entityType);
-        } else {
+        else
             addAccountabilityReference(name, entityType);
-        }
         parser.setCurrentEntityType(entityType);
 
         parser.getAom().addEntityType(entityType);

@@ -11,7 +11,6 @@ public class Parser implements Parsable{
 
     EntityParser entityParser;
     PropertyParser propertyParser;
-    AccoutabilityParser accoutabilityParser;
     ArrayParser arrayParser;
 
     EntityType currentEntityType;
@@ -25,7 +24,6 @@ public class Parser implements Parsable{
 
         entityParser = new EntityParser(this);
         propertyParser = new PropertyParser(this);
-        accoutabilityParser = new AccoutabilityParser(this);
         arrayParser = new ArrayParser(this);
 
         schema.fieldNames().forEachRemaining(entityTypeName -> {
@@ -48,7 +46,7 @@ public class Parser implements Parsable{
         }
 
         if (!objectNode.has("type"))
-            return;
+            return; //TODO: handle this case
 
         if(objectNode.get("type").asText().equals("object")) {
             entityParser.parse(name, objectNode);

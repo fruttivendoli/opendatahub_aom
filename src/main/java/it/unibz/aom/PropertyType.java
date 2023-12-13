@@ -36,49 +36,4 @@ public class PropertyType {
         return type.isInstance(value);
     }
 
-
-    public static PropertyType createPropertyType(String name, ObjectNode property) {
-        if(property.get("type") == null) {
-            //todo: what do we do here??
-            return null;
-        }
-        String typeStr = property.get("type").asText();
-        if("object".equals(typeStr)) {
-            // todo: parse additionalProperties Fields
-            return null;
-        }
-        boolean nullable = property.has("nullable") && property.get("nullable").asBoolean();
-        boolean readOnly = property.has("readOnly") && property.get("readOnly").asBoolean();
-
-        Class<?> type = getSimpleType(typeStr, property.has("items") ? (ObjectNode) property.get("items") : null);
-
-        return new PropertyType(name, type, nullable, readOnly);
-    }
-
-
-    private static Class<?> getSimpleType(String type, ObjectNode items) {
-        return switch (type) {
-            case "string" -> String.class;
-            case "integer" -> Integer.class;
-            case "boolean" -> Boolean.class;
-            case "float" -> Float.class;
-            case "double" -> Double.class;
-            case "long" -> Long.class;
-            case "short" -> Short.class;
-            case "byte" -> Byte.class;
-            case "char" -> Character.class;
-            case "void" -> Void.class;
-            case "array" -> { //Fixme: this may be not correct
-                System.out.println(items);
-                if(items.has("type")) {
-                    Class<?> elementType = getSimpleType(items.get("type").asText(), items.has("items") ? (ObjectNode) items.get("items") : null);
-                    yield java.lang.reflect.Array.newInstance(elementType, 0).getClass();
-                } else {
-                    //todo: handle array of entities
-                    yield null;
-                }
-            }
-            default -> null;
-        };
-    }
 }
