@@ -1,8 +1,8 @@
 package it.unibz.aom.accountability.implementations;
 
 import it.unibz.aom.accountability.AccountabilityType;
-import it.unibz.aom.accountability.Filter;
-import it.unibz.aom.accountability.FilterFactory;
+import it.unibz.aom.accountability.AccountabilityKey;
+import it.unibz.aom.accountability.AccountabilityKeyFactory;
 import it.unibz.aom.typesquare.Entity;
 
 import java.util.List;
@@ -18,11 +18,6 @@ public class LabeledAccountability extends Accountability {
 
     public String getLabel() {
         return label;
-    }
-
-    @Override
-    public Filter getFilter() {
-        return FilterFactory.create().add("name", type.getName()).add("label", label).build();
     }
 
 }

@@ -3,29 +3,29 @@ package it.unibz.aom.accountability;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FilterFactory {
+public class AccountabilityKeyFactory {
 
     private HashMap<String, Object> filter;
 
-    public FilterFactory() {
+    public AccountabilityKeyFactory() {
         this.filter = new HashMap<>();
     }
 
-    public FilterFactory add(String key, Object value) {
+    public AccountabilityKeyFactory add(String key, Object value) {
         this.filter.put(key, value);
         return this;
     }
 
-    public Filter build() {
+    public AccountabilityKey build() {
         Object[] items = filter.entrySet().stream()
                 .sorted(HashMap.Entry.comparingByKey())
                 .map(Map.Entry::getValue)
                 .toArray();
-        return new Filter(items);
+        return new AccountabilityKey(items);
     }
 
-    public static FilterFactory create() {
-        return new FilterFactory();
+    public static AccountabilityKeyFactory create() {
+        return new AccountabilityKeyFactory();
     }
 
 }

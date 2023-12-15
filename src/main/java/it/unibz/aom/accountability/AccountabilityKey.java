@@ -1,17 +1,17 @@
 package it.unibz.aom.accountability;
 
-public class Filter {
+public class AccountabilityKey {
 
     private Object[] items;
 
-    public Filter(Object[] items) {
+    public AccountabilityKey(Object[] items) {
         this.items = items;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Filter) {
-            Filter other = (Filter) obj;
+        if (obj instanceof AccountabilityKey) {
+            AccountabilityKey other = (AccountabilityKey) obj;
             if (items.length != other.items.length) {
                 return false;
             }
