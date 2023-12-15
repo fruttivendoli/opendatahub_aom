@@ -1,7 +1,7 @@
 package it.unibz.parser;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import it.unibz.aom.PropertyType;
+import it.unibz.aom.typesquare.PropertyType;
 import it.unibz.utils.SimpleTypeMapper;
 
 public class ArrayParser implements Parsable{

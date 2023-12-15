@@ -1,4 +1,7 @@
-package it.unibz.aom;
+package it.unibz.aom.accountability;
+
+import it.unibz.aom.typesquare.Entity;
+import it.unibz.aom.typesquare.EntityType;
 
 public class AccountabilityType {
 

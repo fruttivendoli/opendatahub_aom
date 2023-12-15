@@ -1,21 +1,25 @@
-package it.unibz.aom;
+package it.unibz.aom.typesquare;
+
+import it.unibz.aom.AOMException;
+import it.unibz.aom.accountability.Filter;
+import it.unibz.aom.accountability.FilterFactory;
+import it.unibz.aom.accountability.implementations.LabeledAccountability;
+import it.unibz.aom.accountability.implementations.Accountability;
+import it.unibz.aom.accountability.AccountabilityType;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Entity {
     private final EntityType type;
     private final Map<String, Property> properties;
-    private final Map<String, Accountability> accountabilities;
-    private final Map<String, Map<String, LabeledAccountability>> labeledAccountabilies;
+    private final Map<Filter, Accountability> accountabilities;
 
     public Entity(EntityType type) {
         this.type = type;
         this.properties = new HashMap<>();
         this.accountabilities = new HashMap<>();
-        this.labeledAccountabilies = new HashMap<>();
 
     }
 
@@ -50,24 +54,23 @@ public class Entity {
             }
         }
 
-        if(accountabilities.containsKey(name)) //TODO: separate accountabilities and labeledAccountabilities
-            accountabilities.get(name).setAccountedEntities(Arrays.asList(accountability));
+        Filter filter;
+        if (label != null)
+            filter = FilterFactory.create().add("name", name).add("label", label).build();
+        else
+            filter = FilterFactory.create().add("name", name).build();
+
+        if(accountabilities.containsKey(filter))
+            accountabilities.get(filter).setAccountedEntities(Arrays.asList(accountability));
         else {
             AccountabilityType accountabilityType = type.getAccountabilityType(name);
-            if (accountabilityType == null) {
-                if (label != null) {
-                    System.out.println("here");
-                    if (labeledAccountabilies.containsKey(name))
-                        labeledAccountabilies.get(name).put(label, new LabeledAccountability(_type, label, Arrays.asList(accountability)));
-                    else {
-                        Map<String, LabeledAccountability> map = new HashMap<>() {{
-                            put(label, new LabeledAccountability(_type, label, Arrays.asList(accountability)));
-                        }};
-                        labeledAccountabilies.put(name, map);
-                    }
-                } else {
-                    accountabilities.put(name, new Accountability(_type, Arrays.asList(accountability)));
-                }
+            if (accountabilityType != null) {
+                Accountability newAccountability;
+                if (label != null)
+                    newAccountability = new LabeledAccountability(_type, label, Arrays.asList(accountability));
+                else
+                    newAccountability = new Accountability(_type, Arrays.asList(accountability));
+                accountabilities.put(filter, newAccountability);
             }
         }
     }
@@ -81,16 +84,21 @@ public class Entity {
     }
 
     public Accountability getAccountability(String name) {
-        return accountabilities.get(name);
+        return accountabilities.get(
+                FilterFactory.create().add("name", name).build()
+        );
     }
 
-    public LabeledAccountability getAccountability(String name, String key) {
-        return labeledAccountabilies.get(name).get(key);
+    public LabeledAccountability getAccountability(String name, String label) {
+        return (LabeledAccountability) accountabilities.get(
+                FilterFactory.create().add("name", name).add("label", label).build()
+        );
     }
 
     public Object getProperty(String name) {
         return properties.get(name).getValue();
     }
+
     public EntityType getType() {
         return type;
     }

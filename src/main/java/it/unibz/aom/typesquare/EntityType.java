@@ -1,9 +1,8 @@
-package it.unibz.aom;
+package it.unibz.aom.typesquare;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import it.unibz.aom.accountability.AccountabilityType;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
 public class EntityType {

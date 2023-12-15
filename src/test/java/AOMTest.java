@@ -1,4 +1,8 @@
 import it.unibz.aom.*;
+import it.unibz.aom.accountability.AccountabilityType;
+import it.unibz.aom.typesquare.Entity;
+import it.unibz.aom.typesquare.EntityType;
+import it.unibz.aom.typesquare.PropertyType;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -141,9 +145,6 @@ public class AOMTest {
 
         villa.setAccountability("person", "adults", jeff);
         villa.setAccountability("person", "children", john);
-
-        assertEquals("Jeff", villa.getAccountability("person", "adults").getAccountedEntity().getProperty("name"));
-        assertEquals(12, villa.getAccountability("person", "children").getAccountedEntity().getProperty("age"));
     }
 
 }

@@ -2,7 +2,7 @@ package it.unibz.parser;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import it.unibz.aom.Aom;
-import it.unibz.aom.EntityType;
+import it.unibz.aom.typesquare.EntityType;
 
 public class Parser implements Parsable{
 

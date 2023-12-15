@@ -1,4 +1,10 @@
-package it.unibz.aom;
+package it.unibz.aom.accountability.implementations;
+
+import it.unibz.aom.AOMException;
+import it.unibz.aom.accountability.AccountabilityType;
+import it.unibz.aom.accountability.Filter;
+import it.unibz.aom.accountability.FilterFactory;
+import it.unibz.aom.typesquare.Entity;
 
 import java.util.List;
 
@@ -30,4 +36,7 @@ public class Accountability {
         this.accountedEntities = accountedEntities;
     }
 
+    public Filter getFilter() {
+        return FilterFactory.create().add("name", type.getName()).build();
+    }
 }

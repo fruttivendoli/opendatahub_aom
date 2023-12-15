@@ -1,4 +1,6 @@
-package it.unibz.aom;
+package it.unibz.aom.typesquare;
+
+import it.unibz.aom.AOMException;
 
 public class Property {
 

@@ -1,4 +1,4 @@
-package it.unibz.aom;
+package it.unibz.aom.typesquare;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 

@@ -1,7 +1,8 @@
 package it.unibz.aom;
 
+import it.unibz.aom.typesquare.EntityType;
+
 import java.util.HashMap;
-import java.util.LinkedList;
 
 public class Aom {
 

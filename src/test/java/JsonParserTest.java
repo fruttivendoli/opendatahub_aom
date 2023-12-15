@@ -1,8 +1,8 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import it.unibz.aom.Aom;
-import it.unibz.aom.EntityType;
-import it.unibz.aom.PropertyType;
+import it.unibz.aom.typesquare.EntityType;
+import it.unibz.aom.typesquare.PropertyType;
 import it.unibz.parser.Parser;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
