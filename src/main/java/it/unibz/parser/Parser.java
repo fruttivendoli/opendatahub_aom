@@ -6,7 +6,7 @@ import it.unibz.aom.EntityType;
 
 public class Parser implements Parsable{
 
-    private Aom aom;
+    private final Aom aom;
     ObjectNode schema;
 
     EntityParser entityParser;

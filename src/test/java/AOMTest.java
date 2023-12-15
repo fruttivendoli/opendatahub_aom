@@ -117,4 +117,33 @@ public class AOMTest {
         assertThrows(AOMException.class , () -> jeff.setProperty("age", "Jeff"));
     }
 
+    @Test
+    public void testMapAccountability() throws AOMException {
+        EntityType person = new EntityType("person");
+        person.addPropertyType(new PropertyType("name", String.class, true, true));
+        person.addPropertyType(new PropertyType("age", Integer.class, true, true));
+
+        EntityType house = new EntityType("house");
+        house.addPropertyType(new PropertyType("area", Double.class, true, true));
+
+        house.addAccountabilityType(new AccountabilityType("person", person));
+
+        Entity jeff = person.create();
+        jeff.setProperty("name", "Jeff");
+        jeff.setProperty("age", 42);
+
+        Entity john = person.create();
+        john.setProperty("name", "John");
+        john.setProperty("age", 12);
+
+        Entity villa = house.create();
+        villa.setProperty("area", 100.0);
+
+        villa.setAccountability("person", "adults", jeff);
+        villa.setAccountability("person", "children", john);
+
+        assertEquals("Jeff", villa.getAccountability("person", "adults").getAccountedEntity().getProperty("name"));
+        assertEquals(12, villa.getAccountability("person", "children").getAccountedEntity().getProperty("age"));
+    }
+
 }
