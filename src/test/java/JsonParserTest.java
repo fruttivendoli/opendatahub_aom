@@ -1,6 +1,7 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import it.unibz.aom.Aom;
+import it.unibz.aom.accountability.AccountabilityType;
 import it.unibz.aom.typesquare.EntityType;
 import it.unibz.aom.typesquare.PropertyType;
 import it.unibz.parser.Parser;
@@ -68,6 +69,15 @@ public class JsonParserTest {
     public void testAccountability() {
         EntityType accommodationRoomLinked = aom.getEntityType("AccommodationRoomLinked");
         assertNotNull(accommodationRoomLinked.getAccountabilityType("LicenseInfo").getAccountedType());
+    }
+
+    @Test
+    public void testLabeledAccountability() {
+        EntityType accommodationLinked = aom.getEntityType("AccommodationLinked");
+        assertNotNull(accommodationLinked.getAccountabilityType("AccommodationRoomLinked").getAccountedType());
+        AccountabilityType accoDetail = accommodationLinked.getAccountabilityType("AccoDetail");
+        assertNotNull(accoDetail.getAccountedType());
+        assertEquals("AccoDetail", accoDetail.getAccountedType().getName());
     }
 
 }
