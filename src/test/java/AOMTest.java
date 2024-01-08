@@ -130,7 +130,7 @@ public class AOMTest {
         EntityType house = new EntityType("house");
         house.addPropertyType(new PropertyType("area", Double.class, true, true));
 
-        house.addAccountabilityType(new AccountabilityType("person", person));
+        house.addAccountabilityType(new AccountabilityType("person", person)); //todo introduce parameter to require a label
 
         Entity jeff = person.create();
         jeff.setProperty("name", "Jeff");

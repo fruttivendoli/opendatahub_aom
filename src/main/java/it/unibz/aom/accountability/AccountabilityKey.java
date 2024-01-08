@@ -10,8 +10,7 @@ public class AccountabilityKey {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof AccountabilityKey) {
-            AccountabilityKey other = (AccountabilityKey) obj;
+        if (obj instanceof AccountabilityKey other) {
             if (items.length != other.items.length) {
                 return false;
             }

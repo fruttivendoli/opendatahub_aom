@@ -1,8 +1,6 @@
 package it.unibz.aom.accountability.implementations;
 
 import it.unibz.aom.accountability.AccountabilityType;
-import it.unibz.aom.accountability.AccountabilityKey;
-import it.unibz.aom.accountability.AccountabilityKeyFactory;
 import it.unibz.aom.typesquare.Entity;
 
 import java.util.List;
