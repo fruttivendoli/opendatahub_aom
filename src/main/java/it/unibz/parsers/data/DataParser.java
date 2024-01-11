@@ -37,8 +37,10 @@ public class DataParser {
                 Entity rootEntity = rootEntityType.create();
                 item.fields().forEachRemaining(field -> {
                     try {
+                        System.out.println(field.getKey());
+                        System.out.println(rootEntityType.getAccountabilityType(field.getKey()) != null);
                     if (rootEntityType.getAccountabilityType(field.getKey()) != null) {
-                        // objectParser.parse(rootEntity, field.getKey(), (ObjectNode) field.getValue());
+                        objectParser.parse(rootEntity, field.getKey(), field.getValue());
                     } else {
                         propertyParser.parse(rootEntity, field.getKey(), field.getValue());
                     }

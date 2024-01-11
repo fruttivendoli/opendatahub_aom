@@ -69,6 +69,8 @@ public class SchemaParserTest {
     public void testAccountability() {
         EntityType accommodationRoomLinked = aom.getEntityType("AccommodationRoomLinked");
         assertNotNull(accommodationRoomLinked.getAccountabilityType("LicenseInfo").getAccountedType());
+        assertEquals(accommodationRoomLinked.getAccountabilityType("LicenseInfo").getAccountedType().getName(), "LicenseInfo");
+        assertNotNull(accommodationRoomLinked.getAccountabilityType("_Meta"));
     }
 
     @Test
