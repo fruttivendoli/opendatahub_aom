@@ -123,6 +123,8 @@ public class AOMTest {
 
     @Test
     public void testMapAccountability() throws AOMException {
+        //Define Schema
+
         EntityType person = new EntityType("person");
         person.addPropertyType(new PropertyType("name", String.class, true, true));
         person.addPropertyType(new PropertyType("age", Integer.class, true, true));
@@ -131,6 +133,8 @@ public class AOMTest {
         house.addPropertyType(new PropertyType("area", Double.class, true, true));
 
         house.addAccountabilityType(new AccountabilityType("person", person)); //todo introduce parameter to require a label
+
+        //Populate with data
 
         Entity jeff = person.create();
         jeff.setProperty("name", "Jeff");
@@ -145,6 +149,13 @@ public class AOMTest {
 
         villa.setAccountability("person", "adults", jeff);
         villa.setAccountability("person", "children", john);
+
+        //Asserts
+
+        assertEquals("Jeff", villa.getAccountability("person", "adults").getAccountedEntity().getProperty("name"));
+        assertEquals(42, villa.getAccountability("person", "adults").getAccountedEntity().getProperty("age"));
+        assertEquals("John", villa.getAccountability("person", "children").getAccountedEntity().getProperty("name"));
+        assertEquals(12, villa.getAccountability("person", "children").getAccountedEntity().getProperty("age"));
     }
 
 }

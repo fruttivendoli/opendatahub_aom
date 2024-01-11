@@ -22,14 +22,27 @@ public class EntityParser implements Parsable{
         EntityType entityType = new EntityType(name);
         EntityType currentEntityType = parser.getCurrentEntityType();
 
-        if(currentEntityType == null)
+        if(jsonObj.get("additionalProperties").isObject() && jsonObj.get("additionalProperties").has("type")) {
+            if(jsonObj.get("additionalProperties").get("type").equals("object")) {
+                System.out.println("Parsing ref entity type");
+                String ref = jsonObj.get("additionalProperties").get("$ref").asText();
+                String refName = ref.split("/")[ref.split("/").length - 1];
+                entityType = parser.getAom().getEntityType(refName);
+            } else {
+
+            }
+            //TODO: maybe parse refEntityType first
+        } else {
+            entityType = new EntityType(name);
+        }
+
+        if (currentEntityType == null)
             parser.getAom().addEntityType(entityType);
         else
             addAccountabilityReference(name, entityType);
         parser.setCurrentEntityType(entityType);
 
-        parser.getAom().addEntityType(entityType);
-        if(!jsonObj.has("properties")) {
+        if (!jsonObj.has("properties")) {
             // todo: we need to fix in post
             return;
         }
@@ -49,5 +62,4 @@ public class EntityParser implements Parsable{
                 )
         );
     }
-
 }

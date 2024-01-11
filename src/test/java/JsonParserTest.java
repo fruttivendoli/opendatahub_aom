@@ -74,7 +74,7 @@ public class JsonParserTest {
     @Test
     public void testLabeledAccountability() {
         EntityType accommodationLinked = aom.getEntityType("AccommodationLinked");
-        assertNotNull(accommodationLinked.getAccountabilityType("AccommodationRoomLinked").getAccountedType());
+        assertNotNull(accommodationLinked.getAccountabilityType("AccoDetail").getAccountedType());
         AccountabilityType accoDetail = accommodationLinked.getAccountabilityType("AccoDetail");
         assertNotNull(accoDetail.getAccountedType());
         assertEquals("AccoDetail", accoDetail.getAccountedType().getName());
