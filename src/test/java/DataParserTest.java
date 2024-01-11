@@ -8,8 +8,6 @@ import it.unibz.parsers.schema.SchemaParser;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import javax.xml.crypto.Data;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
@@ -50,7 +48,7 @@ public class DataParserTest {
         try {
             ObjectNode data = new ObjectMapper().readValue(responseStr, ObjectNode.class);
             DataParser dataParser = new DataParser(aom, data, "EventLinked");
-            events = dataParser.parse();
+            events = dataParser.getEntities();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -391,6 +389,10 @@ public class DataParserTest {
         assertNull(eventDate0.getProperty("EventDateAdditionalTime"));
 
         Entity licenseInfo = event.getAccountedEntity("LicenseInfo");
+        assertEquals(licenseInfo.getProperty("Author"), "");
+        assertEquals(licenseInfo.getProperty("License"), "CC0");
+        assertEquals(licenseInfo.getProperty("ClosedData"), false);
+        assertEquals(licenseInfo.getProperty("LicenseHolder"), "https://www.lts.it");
 
 
         assertEquals(event.getProperty("Latitude"), 46.644273);
@@ -474,6 +476,7 @@ public class DataParserTest {
         Entity event = events.get(0);
         Entity locationInfo = event.getAccountedEntity("LocationInfo");
         Entity tvInfo = locationInfo.getAccountedEntity("TvInfo");
+        assertEquals(tvInfo.getAccountability("Name", "cs").getPrimitiveValue(), "Hafling/Avelengo-Vöran/Verano-Meran 2000");
         assertEquals(tvInfo.getAccountability("Name", "de").getPrimitiveValue(), "Hafling - Vöran - Meran 2000");
         assertEquals(tvInfo.getAccountability("Name", "it").getPrimitiveValue(), "Avelengo - Verano - Merano 2000");
 

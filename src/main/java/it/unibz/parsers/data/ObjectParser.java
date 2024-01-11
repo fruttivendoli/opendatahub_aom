@@ -1,7 +1,6 @@
 package it.unibz.parsers.data;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import it.unibz.aom.AOMException;
 import it.unibz.aom.Aom;
 import it.unibz.aom.accountability.AccountabilityType;
@@ -9,8 +8,8 @@ import it.unibz.aom.typesquare.Entity;
 import it.unibz.aom.typesquare.EntityType;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class ObjectParser {
 
@@ -26,61 +25,65 @@ public class ObjectParser {
         objectNode.fields().forEachRemaining(field -> {
             try {
                 EntityType entityType = parent.getType();
-                System.out.println(field.getKey());
-                if (entityType.getAccountabilityType(field.getKey()) != null) {
-                    AccountabilityType accountabilityType = entityType.getAccountabilityType(field.getKey());
-                    EntityType childType = entityType.getAccountabilityType(field.getKey()).getAccountedType();
-                    if(accountabilityType.isLabeled()) {
-                        field.getValue().fields().forEachRemaining(labelledField -> {
-                            Entity child = childType.create();
-                            if(labelledField.getValue().isObject())
-                                this.parse(child, labelledField.getValue());
-                            else {
-                                try {
-                                    propertyParser.parse(child, "_", labelledField.getValue()); //todo: make this better
-                                } catch (AOMException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            }
-                            try {
-                                parent.setAccountability(field.getKey(), labelledField.getKey(), child); // todo: array hashmap ???
-                            } catch (AOMException e) {
-                                throw new RuntimeException(e);
-                            }
-                        });
-
-                    } else {
-                        if(field.getValue().isObject() || field.getValue().isNull()) {
-                            Entity child = null;
-                            if(field.getValue().isObject()) {
-                                child = childType.create();
-                                this.parse(child, field.getValue());
-                            }
-                            try {
-                                parent.setAccountability(field.getKey(), child);
-                            } catch (AOMException e) {
-                                throw new RuntimeException(e);
-                            }
-                        } else if(field.getValue().isArray()) {
-                            List<Entity> children = new ArrayList<>();
-                            field.getValue().forEach(arrayItem -> {
-                                Entity child = childType.create();
-                                this.parse(child, arrayItem);
-                                children.add(child);
-                            });
-                            Entity[] childrenArray = new Entity[children.size()];
-                            children.toArray(childrenArray);
-                            parent.setAccountability(field.getKey(), childrenArray);
-                        }
-                    }
-                } else {
-                    propertyParser.parse(parent, field.getKey(), field.getValue());
+                if (entityType.hasAccountabilityType(field.getKey())) {
+                    this.parseAccountability(parent, entityType, field);
+                } else if(!field.getValue().isObject()) {
+                    propertyParser.parseForEntityType(parent, field.getKey(), field.getValue());
                 }
             } catch (AOMException e) {
                 throw new RuntimeException(e);
             }
         });
 
+    }
+
+    private void parseAccountability(Entity parent, EntityType entityType, Map.Entry<String, JsonNode> field) throws AOMException {
+        AccountabilityType accountabilityType = entityType.getAccountabilityType(field.getKey());
+        EntityType childType = entityType.getAccountabilityType(field.getKey()).getAccountedType();
+        if(accountabilityType.isLabeled()) {
+            this.parseLabeledAccountability(parent, childType, field);
+        } if(field.getValue().isObject() || field.getValue().isNull()) {
+                this.parseSimpleAccountability(parent, childType, field);
+            } else if(field.getValue().isArray()) {
+                this.parseArrayAccountability(parent, childType, field);
+        }
+    }
+    private void parseSimpleAccountability(Entity parent, EntityType childType, Map.Entry<String, JsonNode> field) throws AOMException {
+        Entity child = null;
+        if(!field.getValue().isNull() && !field.getValue().isEmpty()) {
+            child = childType.create();
+            this.parse(child, field.getValue());
+        }
+        parent.setAccountability(field.getKey(), child);
+    }
+
+    private void parseArrayAccountability(Entity parent, EntityType childType, Map.Entry<String, JsonNode> field) throws AOMException {
+        List<Entity> children = new ArrayList<>();
+        field.getValue().forEach(arrayItem -> {
+            Entity child = childType.create();
+            this.parse(child, arrayItem);
+            children.add(child);
+        });
+        Entity[] childrenArray = new Entity[children.size()];
+        children.toArray(childrenArray);
+        parent.setAccountability(field.getKey(), childrenArray);
+
+    }
+
+    private void parseLabeledAccountability(Entity parent, EntityType childType, Map.Entry<String, JsonNode> field) {
+        field.getValue().fields().forEachRemaining(labelledField -> {
+            Entity child = childType.create();
+            try {
+                if (labelledField.getValue().isObject()) {
+                    this.parse(child, labelledField.getValue());
+                } else {
+                    propertyParser.parseLabeledAccountability(child, labelledField.getKey(), labelledField.getValue()); //todo: make this better
+                }
+                parent.setAccountability(field.getKey(), labelledField.getKey(), child);
+            } catch (AOMException ex) {
+                // skip
+            }
+        });
     }
 
 }

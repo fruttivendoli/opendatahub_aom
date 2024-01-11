@@ -17,14 +17,20 @@ public class PropertyParser {
         this.aom = aom;
     }
 
-    public void parse(Entity parent, String key, JsonNode value) throws AOMException {
+    public void parseForEntityType(Entity parent, String key, JsonNode value) throws AOMException {
         PropertyType propertyType = parent.getType().getPropertyType(key);
         if(propertyType == null) {
-            System.out.println("WARNING: property type " + key + " not found in entity type " + parent.getType().getName());
-            System.out.println("WARNING: skipping property " + key + " with value " + value);
             return;
         }
         parent.setProperty(key, parseJsonNodeToType(propertyType, value));
+    }
+
+    public void parseLabeledAccountability(Entity parent, String key, JsonNode value) throws AOMException {
+        PropertyType propertyType = parent.getType().getPropertyType("_");
+        if(propertyType == null) {
+            return;
+        }
+        parent.setProperty("_", parseJsonNodeToType(propertyType, value));
     }
 
     private Object parseJsonNodeToType(PropertyType propertyType, JsonNode value) throws AOMException {

@@ -36,4 +36,8 @@ public class Accountability {
         this.accountedEntities = accountedEntities;
     }
 
+    public AccountabilityType getAccountabilityType() {
+        return this.type;
+    }
+
 }

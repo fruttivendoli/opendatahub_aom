@@ -1,7 +1,6 @@
 package it.unibz.parsers.data;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import it.unibz.aom.AOMException;
 import it.unibz.aom.Aom;
 import it.unibz.aom.typesquare.Entity;
 import it.unibz.aom.typesquare.EntityType;
@@ -28,7 +27,7 @@ public class DataParser {
         objectParser = new ObjectParser(aom);
     }
 
-    public List<Entity> parse() { // todo: what if the root entity is not a list?
+    public List<Entity> getEntities() {
         List<Entity> entities = new ArrayList<>();
         if(data.has("Items")) {
             data.get("Items").forEach(item -> {
@@ -39,6 +38,12 @@ public class DataParser {
         }
 
         return entities;
+    }
+
+    public Entity getEntity() {
+        Entity entity = rootEntityType.create();
+        objectParser.parse(entity, data);
+        return entity;
     }
 
 }
