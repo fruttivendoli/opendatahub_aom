@@ -52,13 +52,30 @@ public class Parser implements Parsable{
                 refNode = (ObjectNode) refNode.get(refParts[i]);
             }
 
-            //Prepare simulated stack //TODO: parse intermediate entities if necessary
+            //Prepare simulated stack
             if (refParts.length > 1) {
+                StringBuilder currentScope = new StringBuilder();
                 for (int i = 0; i < refParts.length; i++) {
-                    if (i == 0)
-                        simulatedStack.push(aom.getEntityType(refParts[i]));
+                    if (i > 0)
+                        currentScope.append("/" + refParts[i]);
                     else
+                        currentScope.append(refParts[i]);
+
+                    if (i == 0) {
+                        EntityType root = aom.getEntityType(refParts[i]);
+                        if (root == null) {
+                            parse(refParts[i], null);
+                            root = aom.getEntityType(refParts[i]);
+                        }
+                        simulatedStack.push(root);
+                    } else {
+                        EntityType current = aom.getEntityType(currentScope.toString());
+                        if (current == null) {
+                            parse(currentScope.toString(), null);
+                            current = aom.getEntityType(currentScope.toString());
+                        }
                         simulatedStack.push(simulatedStack.peek().getAccountabilityType(refParts[i]).getAccountedType());
+                    }
                 }
             }
             System.out.print("Simulated stack: ");
