@@ -158,4 +158,34 @@ public class AOMTest {
         assertEquals(12, villa.getAccountability("person", "children").getAccountedEntity().getProperty("age"));
     }
 
+    @Test
+    public void testHashmap() throws AOMException {
+        //Define Schema
+        EntityType mapping = new EntityType("mapping");
+        EntityType mappingNested = new EntityType("mappingNested");
+        mappingNested.addPropertyType(new PropertyType("_", String.class, true, true));
+
+        mapping.addAccountabilityType(new AccountabilityType("_", mappingNested));
+
+        //Populate with data
+
+        Entity mapping1 = mapping.create();
+
+        //Create map
+
+        //First entry
+        Entity mappingNested1 = mappingNested.create();
+        mappingNested1.setProperty("_", "value1");
+        mapping1.setAccountability("_", "key1", mappingNested1);
+
+        //Second entry
+        Entity mappingNested2 = mappingNested.create();
+        mappingNested2.setProperty("_", "value2");
+        mapping1.setAccountability("_", "key2", mappingNested2);
+
+        //Asserts
+
+
+    }
+
 }

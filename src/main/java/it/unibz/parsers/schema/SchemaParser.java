@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import it.unibz.aom.Aom;
 import it.unibz.aom.typesquare.EntityType;
 
-public class SchemaParser implements Parsable{
+public class SchemaParser implements SchemaParsable {
 
     private final Aom aom;
     private SchemaParserStack parserStack;

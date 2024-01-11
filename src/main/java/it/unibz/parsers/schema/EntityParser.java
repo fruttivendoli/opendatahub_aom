@@ -6,7 +6,7 @@ import it.unibz.aom.typesquare.EntityType;
 
 import static it.unibz.utils.NameScoper.getRawName;
 
-public class EntityParser implements Parsable{
+public class EntityParser implements SchemaParsable {
 
     SchemaParser parser;
 
@@ -35,7 +35,7 @@ public class EntityParser implements Parsable{
         parser.getParserStack().push(entityType);
 
         if (jsonObj.get("additionalProperties").isObject()) {
-            //Skip intermediate EntityType creation and link directly with label property
+
             if (jsonObj.get("additionalProperties").has("type")) {
                 parser.parse(name + "/_", (ObjectNode) jsonObj.get("additionalProperties"));
                 System.out.println("[4] Setting ref: " + currentEntityType.getName() + " -> " + entityType.getName());

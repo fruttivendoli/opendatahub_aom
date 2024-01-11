@@ -7,7 +7,7 @@ import it.unibz.utils.SimpleTypeMapper;
 
 import static it.unibz.utils.NameScoper.getRawName;
 
-public class PropertyParser implements Parsable{
+public class PropertyParser implements SchemaParsable {
 
     SchemaParser parser;
 

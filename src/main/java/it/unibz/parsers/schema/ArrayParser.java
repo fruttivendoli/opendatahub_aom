@@ -6,7 +6,7 @@ import it.unibz.utils.SimpleTypeMapper;
 
 import static it.unibz.utils.NameScoper.getRawName;
 
-public class ArrayParser implements Parsable{
+public class ArrayParser implements SchemaParsable {
 
     SchemaParser parser;
 
