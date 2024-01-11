@@ -17,6 +17,7 @@ public class EntityParser implements Parsable{
     @Override
     public void parse(String name, ObjectNode jsonObj) {
         System.out.println("Parsing entity type: " + name);
+
         if (parser.getAom().getEntityType(name) != null && parser.getParserStack().peek() != null) { //TODO: fix when entity has been parsed out-of-scope previously
             //Already parsed. Add reference
             System.out.println("[1] Setting ref: " + parser.getParserStack().peek().getName() + " -> " + name);
@@ -29,10 +30,21 @@ public class EntityParser implements Parsable{
             return;
         }
 
+        EntityType entityType = new EntityType(name);
+        EntityType currentEntityType = parser.getParserStack().peek();
+        parser.getParserStack().push(entityType);
+
         if (jsonObj.get("additionalProperties").isObject()) {
             //Skip intermediate EntityType creation and link directly with label property
             if (jsonObj.get("additionalProperties").has("type")) {
-                parser.parse(buildScope("."), (ObjectNode) jsonObj.get("additionalProperties"));
+                parser.parse(buildScope("_"), (ObjectNode) jsonObj.get("additionalProperties"));
+                System.out.println("[4] Setting ref: " + currentEntityType.getName() + " -> " + entityType.getName());
+                currentEntityType.addAccountabilityType(
+                        new AccountabilityType(
+                                getRawName("_"),
+                                entityType
+                        )
+                );
             } else if (jsonObj.get("additionalProperties").has("$ref")) {
                 String ref = jsonObj.get("additionalProperties").get("$ref").asText();
                 String refName = ref.replaceFirst("#/components/schemas/", "");
@@ -43,19 +55,15 @@ public class EntityParser implements Parsable{
                     refEntityType = parser.getAom().getEntityType(refName);
                 }
                 //Add accountability type
-                System.out.println("[2] Setting ref: " + parser.getParserStack().peek().getName() + " -> " + refEntityType.getName() + " (labeled)");
+                System.out.println("[2] Setting ref: " + currentEntityType.getName() + " -> " + refEntityType.getName() + " (labeled)");
                 AccountabilityType accountabilityType = new AccountabilityType(getRawName(refEntityType.getName()), refEntityType);
                 accountabilityType.addProperty("labeled");
-                parser.getParserStack().peek().addAccountabilityType(accountabilityType);
+                currentEntityType.addAccountabilityType(accountabilityType);
             }
 
+            parser.getParserStack().pop();
             return;
         }
-
-        EntityType entityType = new EntityType(name);
-
-        EntityType currentEntityType = parser.getParserStack().peek();
-        parser.getParserStack().push(entityType);
 
         if (currentEntityType == null)
             parser.getAom().addEntityType(entityType);
