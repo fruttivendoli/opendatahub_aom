@@ -16,7 +16,6 @@ public class DataParser {
     private EntityType rootEntityType;
 
     ObjectParser objectParser;
-    PropertyParser propertyParser;
 
     public DataParser(Aom aom, ObjectNode data, String entityType) {
         this.aom = aom;
@@ -27,7 +26,6 @@ public class DataParser {
         this.rootEntityType = aom.getEntityType(entityType);
 
         objectParser = new ObjectParser(aom);
-        propertyParser = new PropertyParser(aom);
     }
 
     public List<Entity> parse() { // todo: what if the root entity is not a list?
@@ -35,19 +33,7 @@ public class DataParser {
         if(data.has("Items")) {
             data.get("Items").forEach(item -> {
                 Entity rootEntity = rootEntityType.create();
-                item.fields().forEachRemaining(field -> {
-                    try {
-                        System.out.println(field.getKey());
-                        System.out.println(rootEntityType.getAccountabilityType(field.getKey()) != null);
-                    if (rootEntityType.getAccountabilityType(field.getKey()) != null) {
-                        objectParser.parse(rootEntity, field.getKey(), field.getValue());
-                    } else {
-                        propertyParser.parse(rootEntity, field.getKey(), field.getValue());
-                    }
-                    } catch (AOMException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+                objectParser.parse(rootEntity, null, item);
                 entities.add(rootEntity);
             });
         }

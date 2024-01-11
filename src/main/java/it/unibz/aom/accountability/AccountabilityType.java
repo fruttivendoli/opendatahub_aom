@@ -36,4 +36,8 @@ public class AccountabilityType {
     public boolean hasProperty(String propertyName) {
         return properties.contains(propertyName);
     }
+
+    public boolean isLabelled() {
+        return hasProperty("labeled");
+    }
 }
