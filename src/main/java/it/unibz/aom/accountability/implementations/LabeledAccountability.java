@@ -1,5 +1,6 @@
 package it.unibz.aom.accountability.implementations;
 
+import it.unibz.aom.AOMException;
 import it.unibz.aom.accountability.AccountabilityType;
 import it.unibz.aom.typesquare.Entity;
 
@@ -16,6 +17,10 @@ public class LabeledAccountability extends Accountability {
 
     public String getLabel() {
         return label;
+    }
+
+    public Object getPrimitiveValue() throws AOMException {
+        return this.getAccountedEntity().getProperty("_");
     }
 
 }

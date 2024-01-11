@@ -35,4 +35,8 @@ public class AccountabilityType {
     public void setLabeled(boolean isLabeled) {
         this.isLabeled = isLabeled;
     }
+
+    public boolean isLabelled() {
+        return hasProperty("labeled");
+    }
 }
