@@ -103,7 +103,7 @@ public class SchemaParser implements SchemaParsable {
             System.out.println("[3] Setting ref: " + parserStack.peek().getName() + " -> " + refName);
             parserStack.peek().addAccountabilityType(
                     new AccountabilityType(
-                            getRawName(refName),
+                            getRawName(name),
                             entityType
                     )
             );

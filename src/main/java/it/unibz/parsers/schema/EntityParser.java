@@ -28,7 +28,7 @@ public class EntityParser implements SchemaParsable {
                 parser.parse(name + "/_", (ObjectNode) jsonObj.get("additionalProperties"));
                 System.out.println("[4] Setting ref: " + currentEntityType.getName() + " -> " + entityType.getName());
                 AccountabilityType accountabilityType = new AccountabilityType(getRawName(name), entityType);
-                accountabilityType.addProperty("labeled");
+                accountabilityType.setLabeled(true);
                 currentEntityType.addAccountabilityType(accountabilityType);
             } else if (jsonObj.get("additionalProperties").has("$ref")) { //TODO: duplicated (1)
                 String ref = jsonObj.get("additionalProperties").get("$ref").asText();
@@ -42,7 +42,7 @@ public class EntityParser implements SchemaParsable {
                 //Add accountability type
                 System.out.println("[2] Setting ref: " + currentEntityType.getName() + " -> " + refEntityType.getName() + " (labeled)");
                 AccountabilityType accountabilityType = new AccountabilityType(getRawName(refEntityType.getName()), refEntityType);
-                accountabilityType.addProperty("labeled");
+                accountabilityType.setLabeled(true);
                 currentEntityType.addAccountabilityType(accountabilityType);
             }
 

@@ -9,10 +9,9 @@ public class AccountabilityType {
 
     EntityType accountedType;
     String name;
-    LinkedList<String> properties;
+    boolean isLabeled;
 
     public AccountabilityType(String name, EntityType accountedType) {
-        this.properties = new LinkedList<>();
         this.accountedType = accountedType;
         this.name = name;
     }
@@ -29,11 +28,11 @@ public class AccountabilityType {
         return accountedType.equals(entity.getType());
     }
 
-    public void addProperty(String propertyName) {
-        properties.add(propertyName);
+    public boolean isLabeled() {
+        return isLabeled;
     }
 
-    public boolean hasProperty(String propertyName) {
-        return properties.contains(propertyName);
+    public void setLabeled(boolean isLabeled) {
+        this.isLabeled = isLabeled;
     }
 }
