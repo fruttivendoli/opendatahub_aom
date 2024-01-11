@@ -7,7 +7,7 @@ import it.unibz.aom.typesquare.EntityType;
 public class Parser implements Parsable{
 
     private final Aom aom;
-    private final ParserStack parserStack;
+    private ParserStack parserStack;
     ObjectNode schema;
 
     EntityParser entityParser;
@@ -30,12 +30,48 @@ public class Parser implements Parsable{
         schema.fieldNames().forEachRemaining(entityTypeName -> {
             ObjectNode entityType = (ObjectNode) schema.get(entityTypeName);
             this.parse(entityTypeName, entityType);
-            this.getParserStack().debug();
         });
     }
 
     @Override
     public void parse(String name, ObjectNode objectNode) {
+
+        if (objectNode == null) { //Only parse by name in a possibly completely different scope
+            System.out.println("Starting out-of-scope parsing of " + name);
+            //Simulate Stack for out-of-scope parsing
+            ParserStack _parserStack = parserStack;
+            ParserStack simulatedStack = new ParserStack();
+            parserStack = simulatedStack;
+
+            String[] refParts = name.split("/");
+
+            //Get ref node from json schema
+            ObjectNode refNode = schema;
+            for (int i = 0; i < refParts.length; i++) {
+                refNode = (ObjectNode) refNode.get(refParts[i]);
+            }
+
+            //Prepare simulated stack //TODO: parse intermediate entities if necessary
+            if (refParts.length > 1) {
+                for (int i = 0; i < refParts.length; i++) {
+                    if (i == 0)
+                        simulatedStack.push(aom.getEntityType(refParts[i]));
+                    else
+                        simulatedStack.push(simulatedStack.peek().getAccountabilityType(refParts[i]).getAccountedType());
+                }
+            }
+            System.out.print("Simulated stack: ");
+            simulatedStack.debug();
+
+            //Parse
+            parse(name, refNode);
+
+            //Restore stack
+            parserStack = _parserStack;
+
+            return;
+        }
+
         if (objectNode.has("$ref")) {
             //Parse ref objects first
             String ref = objectNode.get("$ref").asText();

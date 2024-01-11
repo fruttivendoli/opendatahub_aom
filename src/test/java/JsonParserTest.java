@@ -8,6 +8,7 @@ import it.unibz.parser.Parser;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import static it.unibz.utils.NameScoper.getRawName;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
@@ -77,7 +78,11 @@ public class JsonParserTest {
         assertNotNull(accommodationLinked.getAccountabilityType("AccoDetail").getAccountedType());
         AccountabilityType accoDetail = accommodationLinked.getAccountabilityType("AccoDetail");
         assertNotNull(accoDetail.getAccountedType());
-        assertEquals("AccoDetail", accoDetail.getAccountedType().getName());
+        AccountabilityType nestedAccoDetail = accoDetail.getAccountedType().getAccountabilityType("AccoDetail");
+        assertNotNull(nestedAccoDetail);
+
+        assertEquals("AccommodationLinked/AccoDetail", accoDetail.getAccountedType().getName());
+        assertEquals("AccoDetail", nestedAccoDetail.getAccountedType().getName());
     }
 
 }

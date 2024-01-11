@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import it.unibz.aom.accountability.AccountabilityType;
 import it.unibz.aom.typesquare.EntityType;
 
+import static it.unibz.utils.NameScoper.getRawName;
+
 public class EntityParser implements Parsable{
 
     Parser parser;
@@ -14,12 +16,13 @@ public class EntityParser implements Parsable{
 
     @Override
     public void parse(String name, ObjectNode jsonObj) {
-        if (parser.getAom().getEntityType(name) != null) {
+        System.out.println("Parsing entity type: " + name);
+        if (parser.getAom().getEntityType(name) != null && parser.getParserStack().peek() != null) { //TODO: fix when entity has been parsed out-of-scope previously
             //Already parsed. Add reference
             System.out.println("[1] Setting ref: " + parser.getParserStack().peek().getName() + " -> " + name);
             parser.getParserStack().peek().addAccountabilityType(
                     new AccountabilityType(
-                            name,
+                            getRawName(name),
                             parser.getAom().getEntityType(name)
                     )
             );
@@ -33,19 +36,20 @@ public class EntityParser implements Parsable{
 
         if (jsonObj.get("additionalProperties").isObject()) {
             if (jsonObj.get("additionalProperties").has("type")) {
-                parser.parse("", (ObjectNode) jsonObj.get("additionalProperties"));
+                parser.parse(buildScope("."), (ObjectNode) jsonObj.get("additionalProperties"));
             } else if (jsonObj.get("additionalProperties").has("$ref")) {
                 System.out.println("Parsing ref entity type");
                 String ref = jsonObj.get("additionalProperties").get("$ref").asText();
-                String[] refPath = ref.replaceFirst("#/components/schemas/", "").split("/");
-                EntityType pathProsecuter = parser.getAom().getEntityType(refPath[0]);
-                for (int i = 1; i < refPath.length - 1; i++) {
-                    //TODO: handle not parsed yet
-                    pathProsecuter = pathProsecuter.getAccountabilityType(refPath[i]).getAccountedType();
+                String refName = ref.replaceFirst("#/components/schemas/", "");
+                EntityType refEntityType = parser.getAom().getEntityType(refName);
+                //Parse ref objects first
+                if (refEntityType == null) {
+                    parser.parse(refName, null);
+                    refEntityType = parser.getAom().getEntityType(refName);
                 }
                 //Add accountability type
-                System.out.println("[2] Setting ref: " + entityType.getName() + " -> " + refPath[refPath.length - 1] + " (labeled)");
-                AccountabilityType accountabilityType = new AccountabilityType(refPath[refPath.length - 1], pathProsecuter);
+                System.out.println("[2] Setting ref: " + entityType.getName() + " -> " + refEntityType.getName() + " (labeled)");
+                AccountabilityType accountabilityType = new AccountabilityType(getRawName(refEntityType.getName()), refEntityType);
                 accountabilityType.addProperty("labeled");
                 entityType.addAccountabilityType(accountabilityType);
             }
@@ -57,7 +61,7 @@ public class EntityParser implements Parsable{
             System.out.println("[3] Setting ref: " + currentEntityType.getName() + " -> " + name);
             currentEntityType.addAccountabilityType(
                     new AccountabilityType(
-                            name,
+                            getRawName(name),
                             entityType
                     )
             );
@@ -73,9 +77,13 @@ public class EntityParser implements Parsable{
 
         properties.fieldNames().forEachRemaining(propertyName -> {
             ObjectNode property = (ObjectNode) properties.get(propertyName);
-            parser.parse(propertyName, property);
+            parser.parse(buildScope(propertyName), property);
         });
 
         parser.getParserStack().pop();
+    }
+
+    private String buildScope(String name) {
+        return parser.getParserStack().getScope() + "/" + name;
     }
 }

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import it.unibz.aom.typesquare.PropertyType;
 import it.unibz.utils.SimpleTypeMapper;
 
+import static it.unibz.utils.NameScoper.getRawName;
+
 public class ArrayParser implements Parsable{
 
     Parser parser;
@@ -14,6 +16,8 @@ public class ArrayParser implements Parsable{
 
     @Override
     public void parse(String name, ObjectNode jsonObj) {
+        name = getRawName(name);
+
         ObjectNode items = (ObjectNode) jsonObj.get("items");
         if(items.has("$ref")) {
             // todo: parse nested objects

@@ -32,4 +32,8 @@ public class AccountabilityType {
     public void addProperty(String propertyName) {
         properties.add(propertyName);
     }
+
+    public boolean hasProperty(String propertyName) {
+        return properties.contains(propertyName);
+    }
 }

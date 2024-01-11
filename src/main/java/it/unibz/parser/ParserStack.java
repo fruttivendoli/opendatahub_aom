@@ -26,9 +26,31 @@ public class ParserStack {
         return stack.peek();
     }
 
+    public String getScope() {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < stack.size(); i++) {
+            if (i == 0)
+                sb.append(stack.get(i).getName());
+            else
+                sb.append("/" + stack.get(i).getName());
+        }
+
+        return sb.toString();
+    }
+
     public void debug() {
         System.out.print ("ParserStack:");
-        stack.forEach(entityType -> System.out.print(entityType.getName() + ", "));
+        if (stack.isEmpty())
+            System.out.print(" empty");
+
+        for (int i = 0; i < stack.size(); i++) {
+            if (i == 0)
+                System.out.print(stack.get(i).getName());
+            else
+                System.out.print(" -> " + stack.get(i).getName());
+        }
+
         System.out.println();
     }
 
