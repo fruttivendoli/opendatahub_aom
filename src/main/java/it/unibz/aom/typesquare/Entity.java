@@ -96,6 +96,7 @@ public class Entity {
     }
 
     public Object getProperty(String name) {
+        System.out.println(properties);
         return properties.get(name).getValue();
     }
 

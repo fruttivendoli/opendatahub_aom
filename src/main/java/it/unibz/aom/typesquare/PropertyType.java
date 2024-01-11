@@ -33,7 +33,7 @@ public class PropertyType {
     }
 
     public boolean isCompatibleWith(Object value) {
-        return type.isInstance(value);
+        return  (nullable && value == null) || type.isInstance(value);
     }
 
 }

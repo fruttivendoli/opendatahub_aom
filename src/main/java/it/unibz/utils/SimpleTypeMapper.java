@@ -14,6 +14,7 @@ public class SimpleTypeMapper {
             case "byte" -> Byte.class;
             case "char" -> Character.class;
             case "void" -> Void.class;
+            case "number" -> Double.class;
             default -> null;
         };
     }
