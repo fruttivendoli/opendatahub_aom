@@ -9,6 +9,7 @@ import it.unibz.aom.accountability.AccountabilityType;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Entity {
@@ -87,6 +88,27 @@ public class Entity {
         return accountabilities.get(
                 AccountabilityKeyFactory.create().add("name", name).build()
         );
+    }
+
+    public Entity getAccountedEntity(String name) throws AOMException {
+        Accountability accountability = this.getAccountability(name);
+        if(accountability == null)
+            return null;
+        return accountability.getAccountedEntity();
+    }
+
+    public Entity getAccountedEntity(String name, String label) throws AOMException {
+        Accountability accountability = this.getAccountability(name, label);
+        if(accountability == null)
+            return null;
+        return accountability.getAccountedEntity();
+    }
+
+    public List<Entity> getAccountedEntities(String name) throws AOMException {
+        Accountability accountability = this.getAccountability(name);
+        if(accountability == null)
+            return null;
+        return accountability.getAccountedEntities();
     }
 
     public LabeledAccountability getAccountability(String name, String label) {

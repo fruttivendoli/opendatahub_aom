@@ -337,7 +337,7 @@ public class DataParserTest {
      */
 
     @Test
-    public void parseFirstLevel() {
+    public void parseFirstLevel() throws AOMException {
         Entity event = events.get(0);
         assertEquals(event.getProperty("Id"), "BFEB2DDB0FD54AC9BC040053A5514A92_REDUCED");
         assertNull(event.getProperty("Pdf"));
@@ -351,7 +351,48 @@ public class DataParserTest {
         assertEquals(event.getProperty("Source"), "lts");
         assertNull(event.getProperty("Ticket"));
         assertEquals(event.getProperty("DateEnd"), "2022-06-01T00:00:00");
+
+        List<Entity> gpsInfo = event.getAccountedEntities("GpsInfo");
+        assertEquals(gpsInfo.size(), 1);
+        Entity gpsInfo0 = gpsInfo.get(0);
+        assertEquals(gpsInfo0.getProperty("Gpstype"), "position");
+        assertNull(gpsInfo0.getProperty("Altitude"));
+        assertEquals(gpsInfo0.getProperty("Latitude"), 46.644273);
+        assertEquals(gpsInfo0.getProperty("Longitude"), 11.225259);
+        assertNull(gpsInfo0.getProperty("AltitudeUnitofMeasure"));
+
         assertEquals(event.getProperty("Gpstype"), "position");
+        assertNull(event.getAccountedEntity("Hashtag"));
+
+        List<Entity> odhTags = event.getAccountability("ODHTags").getAccountedEntities();
+        assertEquals(odhTags.size(), 0);
+
+        List<Entity> eventDates = event.getAccountedEntities("EventDate");
+        assertEquals(eventDates.size(), 1);
+        Entity eventDate0 = eventDates.get(0);
+        assertEquals(eventDate0.getProperty("To"), "2022-06-01T00:00:00");
+        assertEquals(eventDate0.getProperty("End"), "17:30:00");
+        assertEquals(eventDate0.getProperty("From"), "2022-06-01T00:00:00");
+        assertEquals(eventDate0.getProperty("Begin"), "09:00:00");
+        assertNull(eventDate0.getProperty("Active"));
+        assertNull(eventDate0.getProperty("DayRID"));
+        assertNull(eventDate0.getProperty("Ticket"));
+        assertNull(eventDate0.getProperty("GpsEast"));
+        assertNull(eventDate0.getProperty("Entrance"));
+        assertNull(eventDate0.getProperty("GpsNorth"));
+        assertEquals(eventDate0.getProperty("Cancelled"), "0");
+        assertNull(eventDate0.getProperty("PriceFrom"));
+        assertNull(eventDate0.getProperty("MaxPersons"));
+        assertNull(eventDate0.getProperty("MinPersons"));
+        assertEquals(eventDate0.getProperty("SingleDays"), false);
+        assertNull(eventDate0.getProperty("InscriptionTill"));
+        assertNull(eventDate0.getProperty("EventCalculatedDay"));
+        assertNull(eventDate0.getProperty("EventDateAdditionalInfo"));
+        assertNull(eventDate0.getProperty("EventDateAdditionalTime"));
+
+        Entity licenseInfo = event.getAccountedEntity("LicenseInfo");
+
+
         assertEquals(event.getProperty("Latitude"), 46.644273);
         assertEquals(event.getProperty("DateBegin"), "2022-06-01T00:00:00");
         assertEquals(event.getProperty("Longitude"), 11.225259);
@@ -367,7 +408,7 @@ public class DataParserTest {
     @Test
     public void parseSimpleAccountabilityWithPrimitives() throws AOMException {
         Entity event = events.get(0);
-        Entity _Meta = event.getAccountability("_Meta").getAccountedEntity();
+        Entity _Meta = event.getAccountedEntity("_Meta");
         assertEquals(_Meta.getProperty("Id"), "BFEB2DDB0FD54AC9BC040053A5514A92_REDUCED");
         assertEquals(_Meta.getProperty("Type"), "event");
         assertEquals(_Meta.getProperty("Source"), "lts");
@@ -378,7 +419,7 @@ public class DataParserTest {
     @Test
     public void parseLabeledAccountability() throws AOMException {
         Entity event = events.get(0);
-        Entity detailDe = event.getAccountability("Detail", "de").getAccountedEntity();
+        Entity detailDe = event.getAccountedEntity("Detail", "de");
         assertEquals(detailDe.getProperty("Title"), "1000-Stufen-Schlucht im Vinschgau");
         assertNull(detailDe.getProperty("Header"));
         assertNull(detailDe.getProperty("BaseText"));
@@ -396,7 +437,7 @@ public class DataParserTest {
         assertNull(detailDe.getProperty("AdditionalText"));
         assertNull(detailDe.getProperty("PublicTransportationInfo"));
 
-        Entity detailIt = event.getAccountability("Detail", "it").getAccountedEntity();
+        Entity detailIt = event.getAccountedEntity("Detail", "it");
         assertEquals(detailIt.getProperty("Title"), "Venosta: La \"valle dei 1000 gradini\"");
         assertNull(detailIt.getProperty("Header"));
         assertNull(detailIt.getProperty("BaseText"));
@@ -418,10 +459,7 @@ public class DataParserTest {
     @Test
     public void parseArrayAccountability() throws AOMException {
         Entity event = events.get(0);
-        System.out.println(
-                event.getAccountability("GpsInfo")
-        );
-        List<Entity> gpsInfo = event.getAccountability("GpsInfo").getAccountedEntities();
+        List<Entity> gpsInfo = event.getAccountedEntities("GpsInfo");
         assertEquals(gpsInfo.size(), 1);
         Entity gpsInfo0 = gpsInfo.get(0);
         assertEquals(gpsInfo0.getProperty("Gpstype"), "position");
@@ -434,18 +472,18 @@ public class DataParserTest {
     @Test
     public void parsePrimitiveMap() throws AOMException {
         Entity event = events.get(0);
-        Entity locationInfo = event.getAccountability("LocationInfo").getAccountedEntity();
-        Entity tvInfo = locationInfo.getAccountability("TvInfo").getAccountedEntity();
+        Entity locationInfo = event.getAccountedEntity("LocationInfo");
+        Entity tvInfo = locationInfo.getAccountedEntity("TvInfo");
         assertEquals(tvInfo.getAccountability("Name", "de").getPrimitiveValue(), "Hafling - Vöran - Meran 2000");
         assertEquals(tvInfo.getAccountability("Name", "it").getPrimitiveValue(), "Avelengo - Verano - Merano 2000");
 
 
-        Entity regionInfo = locationInfo.getAccountability("RegionInfo").getAccountedEntity();
+        Entity regionInfo = locationInfo.getAccountedEntity("RegionInfo");
         assertEquals(regionInfo.getAccountability("Name", "de").getPrimitiveValue(), "Meran und Umgebung");
         assertEquals(regionInfo.getAccountability("Name", "it").getPrimitiveValue(), "Merano e dintorni");
 
 
-        Entity districtInfo = locationInfo.getAccountability("DistrictInfo").getAccountedEntity();
+        Entity districtInfo = locationInfo.getAccountedEntity("DistrictInfo");
         assertEquals(districtInfo.getAccountability("Name", "de").getPrimitiveValue(), "Hafling Dorf");
         assertEquals(districtInfo.getAccountability("Name", "it").getPrimitiveValue(), "Avelengo Paese");
     }
@@ -454,33 +492,91 @@ public class DataParserTest {
     @Test
     public void parseNestedAccountability() throws AOMException {
         Entity event = events.get(0);
-        Entity locationInfo = event.getAccountability("LocationInfo").getAccountedEntity();
-        Entity tvInfo = locationInfo.getAccountability("TvInfo").getAccountedEntity();
+        Entity locationInfo = event.getAccountedEntity("LocationInfo");
+        Entity tvInfo = locationInfo.getAccountedEntity("TvInfo");
         assertEquals(tvInfo.getProperty("Id"), "5228229151CA11D18F1400A02427D15E");
         assertEquals(tvInfo.getProperty("Self"), "https://tourism.opendatahub.com/v1/TourismAssociation/5228229151CA11D18F1400A02427D15E");
 
-        Entity regionInfo = locationInfo.getAccountability("RegionInfo").getAccountedEntity();
+        Entity regionInfo = locationInfo.getAccountedEntity("RegionInfo");
         assertEquals(regionInfo.getProperty("Id"), "D2633A20C24E11D18F1B006097B8970B");
         assertEquals(regionInfo.getProperty("Self"), "https://tourism.opendatahub.com/v1/Region/D2633A20C24E11D18F1B006097B8970B");
 
-        Entity districtInfo = locationInfo.getAccountability("DistrictInfo").getAccountedEntity();
+        Entity districtInfo = locationInfo.getAccountedEntity("DistrictInfo");
         assertEquals(districtInfo.getProperty("Id"), "79CBD64E51C911D18F1400A02427D15E");
     }
 
     @Test
     public void parseNestedEntityAccountabilityMap() throws AOMException {
         Entity event = events.get(0);
-        Entity eventBooking = event.getAccountability("EventBooking").getAccountedEntity();
+        Entity eventBooking = event.getAccountedEntity("EventBooking");
         System.out.println(eventBooking.accountabilities);
-        Entity bookingUrlDe = eventBooking.getAccountability("BookingUrl", "de").getAccountedEntity();
+        Entity bookingUrlDe = eventBooking.getAccountedEntity("BookingUrl", "de");
         assertEquals(bookingUrlDe.getProperty("Url"), "https://mysuedtirol.info/de/veranstaltungen?eventid=BFEB2DDB0FD54AC9BC040053A5514A92");
 
-        Entity bookingUrlEn = eventBooking.getAccountability("BookingUrl", "en").getAccountedEntity();
+        Entity bookingUrlEn = eventBooking.getAccountedEntity("BookingUrl", "en");
         assertEquals(bookingUrlEn.getProperty("Url"), "https://mysuedtirol.info/en/events?eventid=BFEB2DDB0FD54AC9BC040053A5514A92");
 
-        Entity bookingUrlIt = eventBooking.getAccountability("BookingUrl", "it").getAccountedEntity();
+        Entity bookingUrlIt = eventBooking.getAccountedEntity("BookingUrl", "it");
         assertEquals(bookingUrlIt.getProperty("Url"), "https://mysuedtirol.info/it/eventi?eventid=BFEB2DDB0FD54AC9BC040053A5514A92");
+    }
 
+    @Test
+    public void parseWholeResponse() throws AOMException {
+
+        Entity event = events.get(0);
+
+        assertEquals(event.getProperty("Id"), "BFEB2DDB0FD54AC9BC040053A5514A92_REDUCED");
+        assertNull(event.getProperty("Pdf"));
+        assertNull(event.getProperty("Ranc"));
+        assertEquals(event.getProperty("Self"), "https://tourism.opendatahub.com/v1/Event/BFEB2DDB0FD54AC9BC040053A5514A92_REDUCED");
+        assertNull(event.getProperty("Type"));
+
+        Entity _Meta = event.getAccountedEntity("_Meta");
+        assertEquals(_Meta.getProperty("Id"), "BFEB2DDB0FD54AC9BC040053A5514A92_REDUCED");
+        assertEquals(_Meta.getProperty("Type"), "event");
+        assertEquals(_Meta.getProperty("Source"), "lts");
+        assertEquals(_Meta.getProperty("Reduced"), true);
+        assertEquals(_Meta.getProperty("LastUpdate"), "2023-05-24T14:29:48.6122285");
+        assertNull(_Meta.getAccountedEntity("UpdateInfo"));
+
+        assertEquals(event.getProperty("Active"), true);
+
+        Entity detailDe = event.getAccountedEntity("Detail", "de");
+        assertEquals(detailDe.getProperty("Title"), "1000-Stufen-Schlucht im Vinschgau");
+        assertNull(detailDe.getProperty("Header"));
+        assertNull(detailDe.getProperty("BaseText"));
+        assertNull(detailDe.getProperty("Keywords"));
+        assertEquals(detailDe.getProperty("Language"), "de");
+        assertNull(detailDe.getProperty("MetaDesc"));
+        assertNull(detailDe.getProperty("AuthorTip"));
+        assertNull(detailDe.getProperty("IntroText"));
+        assertEquals(detailDe.getProperty("MetaTitle"), "1000-Stufen-Schlucht im Vinschgau | suedtirol.info");
+        assertNull(detailDe.getProperty("SubHeader"));
+        assertNull(detailDe.getProperty("SafetyInfo"));
+        assertNull(detailDe.getProperty("ParkingInfo"));
+        assertNull(detailDe.getProperty("GetThereText"));
+        assertNull(detailDe.getProperty("EquipmentInfo"));
+        assertNull(detailDe.getProperty("AdditionalText"));
+        assertNull(detailDe.getProperty("PublicTransportationInfo"));
+
+
+        assertNull(event.getProperty("OrgRID"));
+        assertNull(event.getProperty("PayMet"));
+        assertNull(event.getProperty("SignOn"));
+        assertEquals(event.getProperty("Source"), "lts");
+        assertNull(event.getProperty("Ticket"));
+        assertEquals(event.getProperty("DateEnd"), "2022-06-01T00:00:00");
+        assertEquals(event.getProperty("Gpstype"), "position");
+        assertEquals(event.getProperty("Latitude"), 46.644273);
+        assertEquals(event.getProperty("DateBegin"), "2022-06-01T00:00:00");
+        assertEquals(event.getProperty("Longitude"), 11.225259);
+        assertEquals(event.getProperty("OdhActive"), false);
+        assertEquals(event.getProperty("Shortname"), "1000-Stufen-Schlucht im Vinschgau");
+        assertEquals(event.getProperty("SmgActive"), false);
+        assertEquals(event.getProperty("FirstImport"), "2022-04-17T00:05:19.6546834");
+        assertEquals(event.getProperty("LastChange"), "2023-05-24T14:29:48.6122285");
+        assertArrayEquals((String[]) event.getProperty("HasLanguage"), new String[]{"de", "it"});
+        assertEquals(event.getProperty("NextBeginDate"), "2022-06-01T09:00:00");
 
     }
 
