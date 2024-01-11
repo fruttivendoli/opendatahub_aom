@@ -18,18 +18,6 @@ public class EntityParser implements SchemaParsable {
     public void parse(String name, ObjectNode jsonObj) {
         System.out.println("Parsing entity type: " + name);
 
-        if (parser.getAom().getEntityType(name) != null && parser.getParserStack().peek() != null) { //TODO: fix when entity has been parsed out-of-scope previously
-            //Already parsed. Add reference
-            System.out.println("[1] Setting ref: " + parser.getParserStack().peek().getName() + " -> " + name);
-            parser.getParserStack().peek().addAccountabilityType(
-                    new AccountabilityType(
-                            getRawName(name),
-                            parser.getAom().getEntityType(name)
-                    )
-            );
-            return;
-        }
-
         EntityType entityType = new EntityType(name);
         EntityType currentEntityType = parser.getParserStack().peek();
         parser.getParserStack().push(entityType);
@@ -42,7 +30,7 @@ public class EntityParser implements SchemaParsable {
                 AccountabilityType accountabilityType = new AccountabilityType(getRawName(name), entityType);
                 accountabilityType.addProperty("labeled");
                 currentEntityType.addAccountabilityType(accountabilityType);
-            } else if (jsonObj.get("additionalProperties").has("$ref")) {
+            } else if (jsonObj.get("additionalProperties").has("$ref")) { //TODO: duplicated (1)
                 String ref = jsonObj.get("additionalProperties").get("$ref").asText();
                 String refName = ref.replaceFirst("#/components/schemas/", "");
                 EntityType refEntityType = parser.getAom().getEntityType(refName);
