@@ -4,7 +4,7 @@ import it.unibz.aom.Aom;
 import it.unibz.aom.accountability.AccountabilityType;
 import it.unibz.aom.typesquare.EntityType;
 import it.unibz.aom.typesquare.PropertyType;
-import it.unibz.parser.Parser;
+import it.unibz.parsers.schema.Parser;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -12,13 +12,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 
-public class JsonParserTest {
+public class SchemaParserTest {
 
     static Aom aom;
 
     @BeforeAll
     public static void setUp() {
-        File file = new File(JsonParserTest.class.getResource("/swaggerTypesExample.json").getFile());
+        File file = new File(SchemaParserTest.class.getResource("/swaggerTypesExample.json").getFile());
         String jsonString = null;
         try {
             jsonString = new String(java.nio.file.Files.readAllBytes(file.toPath()));

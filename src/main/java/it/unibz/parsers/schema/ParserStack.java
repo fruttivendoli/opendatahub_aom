@@ -1,4 +1,4 @@
-package it.unibz.parser;
+package it.unibz.parsers.schema;
 
 import it.unibz.aom.typesquare.EntityType;
 
