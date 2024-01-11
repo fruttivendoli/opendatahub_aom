@@ -4,11 +4,11 @@ import it.unibz.aom.typesquare.EntityType;
 
 import java.util.Stack;
 
-public class ParserStack {
+public class SchemaParserStack {
 
     private final Stack<EntityType> stack;
 
-    public ParserStack() {
+    public SchemaParserStack() {
         stack = new Stack<>();
     }
 

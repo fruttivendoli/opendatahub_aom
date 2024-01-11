@@ -4,7 +4,7 @@ import it.unibz.aom.Aom;
 import it.unibz.aom.accountability.AccountabilityType;
 import it.unibz.aom.typesquare.EntityType;
 import it.unibz.aom.typesquare.PropertyType;
-import it.unibz.parsers.schema.Parser;
+import it.unibz.parsers.schema.SchemaParser;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +32,7 @@ public class SchemaParserTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        aom = new Parser(swagger).getAom();
+        aom = new SchemaParser(swagger).getAom();
     }
 
     @Test

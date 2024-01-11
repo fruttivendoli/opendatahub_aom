@@ -9,9 +9,9 @@ import static it.unibz.utils.NameScoper.getRawName;
 
 public class PropertyParser implements Parsable{
 
-    Parser parser;
+    SchemaParser parser;
 
-    public PropertyParser(Parser parser) {
+    public PropertyParser(SchemaParser parser) {
         this.parser = parser;
     }
 

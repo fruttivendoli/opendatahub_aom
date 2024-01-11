@@ -4,22 +4,22 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import it.unibz.aom.Aom;
 import it.unibz.aom.typesquare.EntityType;
 
-public class Parser implements Parsable{
+public class SchemaParser implements Parsable{
 
     private final Aom aom;
-    private ParserStack parserStack;
+    private SchemaParserStack parserStack;
     ObjectNode schema;
 
     EntityParser entityParser;
     PropertyParser propertyParser;
     ArrayParser arrayParser;
 
-    public Parser(ObjectNode swagger) {
+    public SchemaParser(ObjectNode swagger) {
         String title = swagger.get("info").get("title").asText();
         String description = swagger.get("info").get("description").asText();
         aom = new Aom(title, description);
 
-        parserStack = new ParserStack();
+        parserStack = new SchemaParserStack();
 
         schema = (ObjectNode) swagger.get("components").get("schemas");
 
@@ -40,8 +40,8 @@ public class Parser implements Parsable{
             System.out.println("Starting out-of-scope parsing of " + name);
 
             //Simulate Stack for out-of-scope parsing
-            ParserStack _parserStack = parserStack;
-            ParserStack simulatedStack = new ParserStack();
+            SchemaParserStack _parserStack = parserStack;
+            SchemaParserStack simulatedStack = new SchemaParserStack();
             parserStack = simulatedStack;
 
             String[] refParts = name.split("/");
@@ -114,7 +114,7 @@ public class Parser implements Parsable{
         return aom;
     }
 
-    public ParserStack getParserStack() {
+    public SchemaParserStack getParserStack() {
         return parserStack;
     }
 }

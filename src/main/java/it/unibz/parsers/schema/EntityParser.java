@@ -8,9 +8,9 @@ import static it.unibz.utils.NameScoper.getRawName;
 
 public class EntityParser implements Parsable{
 
-    Parser parser;
+    SchemaParser parser;
 
-    public EntityParser(Parser parser) {
+    public EntityParser(SchemaParser parser) {
         this.parser = parser;
     }
 

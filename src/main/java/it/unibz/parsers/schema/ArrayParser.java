@@ -8,9 +8,9 @@ import static it.unibz.utils.NameScoper.getRawName;
 
 public class ArrayParser implements Parsable{
 
-    Parser parser;
+    SchemaParser parser;
 
-    public ArrayParser(Parser parser) {
+    public ArrayParser(SchemaParser parser) {
         this.parser = parser;
     }
 
