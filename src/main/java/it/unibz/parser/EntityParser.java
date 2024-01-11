@@ -19,7 +19,7 @@ public class EntityParser implements Parsable{
             return;
         }
 
-        EntityType entityType = new EntityType(name);
+        EntityType entityType = null;
         EntityType currentEntityType = parser.getCurrentEntityType();
 
         if(jsonObj.get("additionalProperties").isObject() && jsonObj.get("additionalProperties").has("type")) {
