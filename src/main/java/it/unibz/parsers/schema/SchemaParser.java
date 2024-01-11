@@ -2,7 +2,10 @@ package it.unibz.parsers.schema;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import it.unibz.aom.Aom;
+import it.unibz.aom.accountability.AccountabilityType;
 import it.unibz.aom.typesquare.EntityType;
+
+import static it.unibz.utils.NameScoper.getRawName;
 
 public class SchemaParser implements SchemaParsable {
 
@@ -90,11 +93,20 @@ public class SchemaParser implements SchemaParsable {
             return;
         }
 
-        if (objectNode.has("$ref")) {
+        if (objectNode.has("$ref")) { //TODO: duplicated(1)
             //Parse ref objects first
             String ref = objectNode.get("$ref").asText();
             String refName = ref.replaceFirst("#/components/schemas/", "");
             parse(refName, null); //Parse ref in a possibly out of scope scenario
+            //Set ref
+            EntityType entityType = aom.getEntityType(refName);
+            System.out.println("[3] Setting ref: " + parserStack.peek().getName() + " -> " + refName);
+            parserStack.peek().addAccountabilityType(
+                    new AccountabilityType(
+                            getRawName(refName),
+                            entityType
+                    )
+            );
             return;
         }
 
