@@ -23,7 +23,7 @@ public class AccountabilityType {
     }
 
     public boolean isCompatibleWith(Entity entity) {
-        return accountedType.equals(entity.getType());
+        return entity == null || accountedType.equals(entity.getType());
     }
 
     public boolean isLabeled() {

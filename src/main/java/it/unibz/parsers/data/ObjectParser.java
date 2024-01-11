@@ -51,8 +51,11 @@ public class ObjectParser {
 
                     } else {
                         if(field.getValue().isObject() || field.getValue().isNull()) {
-                            Entity child = childType.create();
-                            this.parse(child, field.getValue());
+                            Entity child = null;
+                            if(field.getValue().isObject()) {
+                                child = childType.create();
+                                this.parse(child, field.getValue());
+                            }
                             try {
                                 parent.setAccountability(field.getKey(), child);
                             } catch (AOMException e) {
