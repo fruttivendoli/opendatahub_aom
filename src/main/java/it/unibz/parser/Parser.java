@@ -38,6 +38,7 @@ public class Parser implements Parsable{
 
         if (objectNode == null) { //Only parse by name in a possibly completely different scope
             System.out.println("Starting out-of-scope parsing of " + name);
+
             //Simulate Stack for out-of-scope parsing
             ParserStack _parserStack = parserStack;
             ParserStack simulatedStack = new ParserStack();
@@ -75,15 +76,13 @@ public class Parser implements Parsable{
         if (objectNode.has("$ref")) {
             //Parse ref objects first
             String ref = objectNode.get("$ref").asText();
-            String[] refParts = ref.split("/");
-            String refName = refParts[refParts.length - 1];
-            ObjectNode refNode = (ObjectNode) schema.get(refName);
-            parse(name, refNode);
+            String refName = ref.replaceFirst("#/components/schemas/", "");
+            parse(refName, null); //Parse ref in a possibly out of scope scenario
             return;
         }
 
         if (!objectNode.has("type"))
-            return; //TODO: handle this case
+            return;
 
         if(objectNode.get("type").asText().equals("object")) {
             entityParser.parse(name, objectNode);
