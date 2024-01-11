@@ -37,14 +37,11 @@ public class EntityParser implements Parsable{
         if (jsonObj.get("additionalProperties").isObject()) {
             //Skip intermediate EntityType creation and link directly with label property
             if (jsonObj.get("additionalProperties").has("type")) {
-                parser.parse(buildScope("_"), (ObjectNode) jsonObj.get("additionalProperties"));
+                parser.parse(name + "/_", (ObjectNode) jsonObj.get("additionalProperties"));
                 System.out.println("[4] Setting ref: " + currentEntityType.getName() + " -> " + entityType.getName());
-                currentEntityType.addAccountabilityType(
-                        new AccountabilityType(
-                                getRawName("_"),
-                                entityType
-                        )
-                );
+                AccountabilityType accountabilityType = new AccountabilityType(getRawName(name), entityType);
+                accountabilityType.addProperty("labeled");
+                currentEntityType.addAccountabilityType(accountabilityType);
             } else if (jsonObj.get("additionalProperties").has("$ref")) {
                 String ref = jsonObj.get("additionalProperties").get("$ref").asText();
                 String refName = ref.replaceFirst("#/components/schemas/", "");

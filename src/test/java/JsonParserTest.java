@@ -8,7 +8,6 @@ import it.unibz.parser.Parser;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static it.unibz.utils.NameScoper.getRawName;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
@@ -73,13 +72,28 @@ public class JsonParserTest {
     }
 
     @Test
-    public void testLabeledAccountability() {
+    public void testLabeledAccountabilityWithRef() {
         EntityType accommodationLinked = aom.getEntityType("AccommodationLinked");
         assertNotNull(accommodationLinked.getAccountabilityType("AccoDetail").getAccountedType());
         AccountabilityType accoDetail = accommodationLinked.getAccountabilityType("AccoDetail");
         assertNotNull(accoDetail.getAccountedType());
         assertTrue(accoDetail.hasProperty("labeled"));
         assertEquals("AccoDetail", accoDetail.getAccountedType().getName());
+    }
+
+    @Test
+    public void testLabeledAccountabilityForNestedAdditionalProperties() {
+        EntityType accommodationLinked = aom.getEntityType("AccommodationLinked");
+        assertNotNull(accommodationLinked.getAccountabilityType("Mapping").getAccountedType());
+        AccountabilityType mapping = accommodationLinked.getAccountabilityType("Mapping");
+        assertNotNull(mapping.getAccountedType());
+        assertTrue(mapping.hasProperty("labeled"));
+        AccountabilityType mappingNested = mapping.getAccountedType().getAccountabilityType("_");
+        assertNotNull(mappingNested.getAccountedType());
+        assertTrue(mappingNested.hasProperty("labeled"));
+        PropertyType property = mappingNested.getAccountedType().getPropertyType("_");
+        assertNotNull(property);
+        assertEquals(String.class, property.getSimpleType());
     }
 
 }
