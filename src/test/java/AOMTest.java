@@ -161,7 +161,7 @@ public class AOMTest {
     @Test
     public void testHashmap() throws AOMException {
         //Define Schema
-        EntityType mapping = new EntityType("mapping");
+        EntityType mapping = new EntityType("Name");
         EntityType mappingNested = new EntityType("mappingNested");
         mappingNested.addPropertyType(new PropertyType("_", String.class, true, true));
 

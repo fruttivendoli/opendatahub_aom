@@ -25,11 +25,22 @@ public class EntityParser implements SchemaParsable {
         if (jsonObj.get("additionalProperties").isObject()) {
 
             if (jsonObj.get("additionalProperties").has("type")) {
-                parser.parse(name + "/_", (ObjectNode) jsonObj.get("additionalProperties"));
-                System.out.println("[4] Setting ref: " + currentEntityType.getName() + " -> " + entityType.getName());
-                AccountabilityType accountabilityType = new AccountabilityType(getRawName(name), entityType);
-                accountabilityType.setLabeled(true);
-                currentEntityType.addAccountabilityType(accountabilityType);
+                if (jsonObj.get("additionalProperties").get("type").asText().equals("object")) {
+                    parser.parse(name + "/_", (ObjectNode) jsonObj.get("additionalProperties"));
+                    System.out.println("[4] Setting ref: " + currentEntityType.getName() + " -> " + entityType.getName());
+                    AccountabilityType accountabilityType = new AccountabilityType(getRawName(name), entityType);
+                    accountabilityType.setLabeled(true);
+                    currentEntityType.addAccountabilityType(accountabilityType);
+                } else {
+                    parser.parse(name + "/_", (ObjectNode) jsonObj.get("additionalProperties"));
+
+                    System.out.println("[4] Setting ref: " + currentEntityType.getName() + " -> " + entityType.getName() + " (labeled)");
+                    AccountabilityType accountabilityType = new AccountabilityType(getRawName(name), entityType);
+                    accountabilityType.setLabeled(true);
+                    currentEntityType.addAccountabilityType(accountabilityType);
+
+                    parser.getAom().addEntityType(entityType);
+                }
             } else if (jsonObj.get("additionalProperties").has("$ref")) { //TODO: duplicated (1)
                 String ref = jsonObj.get("additionalProperties").get("$ref").asText();
                 String refName = ref.replaceFirst("#/components/schemas/", "");

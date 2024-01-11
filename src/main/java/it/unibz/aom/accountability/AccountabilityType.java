@@ -3,8 +3,6 @@ package it.unibz.aom.accountability;
 import it.unibz.aom.typesquare.Entity;
 import it.unibz.aom.typesquare.EntityType;
 
-import java.util.LinkedList;
-
 public class AccountabilityType {
 
     EntityType accountedType;
@@ -37,6 +35,6 @@ public class AccountabilityType {
     }
 
     public boolean isLabelled() {
-        return hasProperty("labeled");
+        return isLabeled;
     }
 }

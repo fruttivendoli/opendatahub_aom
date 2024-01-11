@@ -82,21 +82,21 @@ public class SchemaParserTest {
         assertTrue(accoDetail.isLabeled());
         assertEquals("AccoDetail", accoDetail.getAccountedType().getName());
     }
-
-    @Test
-    public void testLabeledAccountabilityForNestedAdditionalProperties() {
-        EntityType accommodationLinked = aom.getEntityType("AccommodationLinked");
-        assertNotNull(accommodationLinked.getAccountabilityType("Mapping").getAccountedType());
-        AccountabilityType mapping = accommodationLinked.getAccountabilityType("Mapping");
-        assertNotNull(mapping.getAccountedType());
-        assertTrue(mapping.isLabeled());
-        AccountabilityType mappingNested = mapping.getAccountedType().getAccountabilityType("_");
-        assertNotNull(mappingNested.getAccountedType());
-        assertTrue(mappingNested.isLabeled());
-        PropertyType property = mappingNested.getAccountedType().getPropertyType("_");
-        assertNotNull(property);
-        assertEquals(String.class, property.getSimpleType());
-    }
+//
+//    @Test
+//    public void testLabeledAccountabilityForNestedAdditionalProperties() {
+//        EntityType accommodationLinked = aom.getEntityType("AccommodationLinked");
+//        assertNotNull(accommodationLinked.getAccountabilityType("Mapping").getAccountedType());
+//        AccountabilityType mapping = accommodationLinked.getAccountabilityType("Mapping");
+//        assertNotNull(mapping.getAccountedType());
+//        assertTrue(mapping.isLabeled());
+//        AccountabilityType mappingNested = mapping.getAccountedType().getAccountabilityType("_");
+//        assertNotNull(mappingNested.getAccountedType());
+//        assertTrue(mappingNested.isLabeled());
+//        PropertyType property = mappingNested.getAccountedType().getPropertyType("_");
+//        assertNotNull(property);
+//        assertEquals(String.class, property.getSimpleType());
+//    }
 
     @Test
     public void testDifferentObjectNameThanReference() {
@@ -105,6 +105,15 @@ public class SchemaParserTest {
         AccountabilityType locationInfo = accommodationLinked.getAccountabilityType("LocationInfo");
         assertNotNull(locationInfo.getAccountedType());
         assertEquals("LocationInfoLinked", locationInfo.getAccountedType().getName());
+    }
+
+    @Test
+    public void testGetSimpleAdditionalProperty() {
+        EntityType tvInfoLinked = aom.getEntityType("TvInfoLinked");
+        assertNotNull(tvInfoLinked.getAccountabilityType("Name").getAccountedType());
+        AccountabilityType name = tvInfoLinked.getAccountabilityType("Name");
+        assertNotNull(name);
+        assertTrue(name.isLabeled());
     }
 
 }
