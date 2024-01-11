@@ -49,7 +49,7 @@ public class DataParserTest {
 
         try {
             ObjectNode data = new ObjectMapper().readValue(responseStr, ObjectNode.class);
-            DataParser dataParser = new DataParser(aom, data, "#/components/schemas/EventLinked");
+            DataParser dataParser = new DataParser(aom, data, "EventLinked");
             events = dataParser.parse();
         } catch (Exception e) {
             e.printStackTrace();
@@ -365,7 +365,7 @@ public class DataParserTest {
     }
 
     @Test
-    public void parseSimpleAccountability() throws AOMException {
+    public void parseSimpleAccountabilityWithPrimitives() throws AOMException {
         Entity event = events.get(0);
         Entity _Meta = event.getAccountability("_Meta").getAccountedEntity();
         assertEquals(_Meta.getProperty("Id"), "BFEB2DDB0FD54AC9BC040053A5514A92_REDUCED");
@@ -373,7 +373,6 @@ public class DataParserTest {
         assertEquals(_Meta.getProperty("Source"), "lts");
         assertEquals(_Meta.getProperty("Reduced"), true);
         assertEquals(_Meta.getProperty("LastUpdate"), "2023-05-24T14:29:48.6122285");
-        assertNull(_Meta.getProperty("UpdateInfo"));
     }
 
     @Test
@@ -419,6 +418,9 @@ public class DataParserTest {
     @Test
     public void parseArrayAccountability() throws AOMException {
         Entity event = events.get(0);
+        System.out.println(
+                event.getAccountability("GpsInfo")
+        );
         List<Entity> gpsInfo = event.getAccountability("GpsInfo").getAccountedEntities();
         assertEquals(gpsInfo.size(), 1);
         Entity gpsInfo0 = gpsInfo.get(0);
@@ -434,18 +436,49 @@ public class DataParserTest {
         Entity event = events.get(0);
         Entity locationInfo = event.getAccountability("LocationInfo").getAccountedEntity();
         Entity tvInfo = locationInfo.getAccountability("TvInfo").getAccountedEntity();
+        assertEquals(tvInfo.getAccountability("Name", "de").getPrimitiveValue(), "Hafling - Vöran - Meran 2000");
+        assertEquals(tvInfo.getAccountability("Name", "it").getPrimitiveValue(), "Avelengo - Verano - Merano 2000");
+
+
+        Entity regionInfo = locationInfo.getAccountability("RegionInfo").getAccountedEntity();
+        assertEquals(regionInfo.getAccountability("Name", "de").getPrimitiveValue(), "Meran und Umgebung");
+        assertEquals(regionInfo.getAccountability("Name", "it").getPrimitiveValue(), "Merano e dintorni");
+
+
+        Entity districtInfo = locationInfo.getAccountability("DistrictInfo").getAccountedEntity();
+        assertEquals(districtInfo.getAccountability("Name", "de").getPrimitiveValue(), "Hafling Dorf");
+        assertEquals(districtInfo.getAccountability("Name", "it").getPrimitiveValue(), "Avelengo Paese");
+    }
+
+
+    @Test
+    public void parseNestedPrimitiveAccountability() throws AOMException {
+        Entity event = events.get(0);
+        Entity locationInfo = event.getAccountability("LocationInfo").getAccountedEntity();
+        Entity tvInfo = locationInfo.getAccountability("TvInfo").getAccountedEntity();
         assertEquals(tvInfo.getProperty("Id"), "5228229151CA11D18F1400A02427D15E");
         assertEquals(tvInfo.getProperty("Self"), "https://tourism.opendatahub.com/v1/TourismAssociation/5228229151CA11D18F1400A02427D15E");
-        assertEquals(tvInfo.getProperty("Name"), "Hafling - Vöran - Meran 2000");
-        assertEquals(tvInfo.getAccountability("Name", "de").getPrimitiveValue(), "Hafling - Vöran - Meran 2000");
 
         Entity regionInfo = locationInfo.getAccountability("RegionInfo").getAccountedEntity();
         assertEquals(regionInfo.getProperty("Id"), "D2633A20C24E11D18F1B006097B8970B");
         assertEquals(regionInfo.getProperty("Self"), "https://tourism.opendatahub.com/v1/Region/D2633A20C24E11D18F1B006097B8970B");
-        assertEquals(regionInfo.getProperty("Name"), "Meran und Umgebung");
 
         Entity districtInfo = locationInfo.getAccountability("DistrictInfo").getAccountedEntity();
         assertEquals(districtInfo.getProperty("Id"), "79CBD64E51C911D18F1400A02427D15E");
+    }
+
+    @Test
+    public void parseNestedEntityAccountabilityMap() throws AOMException {
+        Entity event = events.get(0);
+        Entity eventBooking = event.getAccountability("EventBooking").getAccountedEntity();
+        Entity bookingUrlDe = eventBooking.getAccountability("BookingUrl", "de").getAccountedEntity();
+        assertEquals(bookingUrlDe.getProperty("Url"), "https://mysuedtirol.info/de/veranstaltungen?eventid=BFEB2DDB0FD54AC9BC040053A5514A92");
+
+        Entity bookingUrlEn = eventBooking.getAccountability("BookingUrl", "en").getAccountedEntity();
+        assertEquals(bookingUrlEn.getProperty("Url"), "https://mysuedtirol.info/en/events?eventid=BFEB2DDB0FD54AC9BC040053A5514A92");
+
+        Entity bookingUrlIt = eventBooking.getAccountability("BookingUrl", "it").getAccountedEntity();
+        assertEquals(bookingUrlIt.getProperty("Url"), "https://mysuedtirol.info/it/eventi?eventid=BFEB2DDB0FD54AC9BC040053A5514A92");
 
 
     }

@@ -33,7 +33,7 @@ public class DataParser {
         if(data.has("Items")) {
             data.get("Items").forEach(item -> {
                 Entity rootEntity = rootEntityType.create();
-                objectParser.parse(rootEntity, null, item);
+                objectParser.parse(rootEntity, item);
                 entities.add(rootEntity);
             });
         }
