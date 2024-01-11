@@ -21,7 +21,7 @@ public class ArrayParser implements Parsable{
         }
 
         Class<?> elementType = SimpleTypeMapper.getSimpleType(items.get("type").asText());
-        parser.getCurrentEntityType().addPropertyType(
+        parser.getParserStack().peek().addPropertyType(
                 new PropertyType(
                         name,
                         java.lang.reflect.Array.newInstance(elementType, 0).getClass(),

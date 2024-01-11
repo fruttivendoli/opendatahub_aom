@@ -15,7 +15,7 @@ public class PropertyParser implements Parsable{
 
     @Override
     public void parse(String name, ObjectNode jsonObj) {
-        EntityType entityType = this.parser.getCurrentEntityType();
+        EntityType entityType = this.parser.getParserStack().peek();
         boolean nullable = jsonObj.has("nullable") && jsonObj.get("nullable").asBoolean();
         boolean readOnly = jsonObj.has("readOnly") && jsonObj.get("readOnly").asBoolean();
 

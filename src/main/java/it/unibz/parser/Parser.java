@@ -7,18 +7,19 @@ import it.unibz.aom.typesquare.EntityType;
 public class Parser implements Parsable{
 
     private final Aom aom;
+    private final ParserStack parserStack;
     ObjectNode schema;
 
     EntityParser entityParser;
     PropertyParser propertyParser;
     ArrayParser arrayParser;
 
-    EntityType currentEntityType;
-
     public Parser(ObjectNode swagger) {
         String title = swagger.get("info").get("title").asText();
         String description = swagger.get("info").get("description").asText();
         aom = new Aom(title, description);
+
+        parserStack = new ParserStack();
 
         schema = (ObjectNode) swagger.get("components").get("schemas");
 
@@ -29,7 +30,7 @@ public class Parser implements Parsable{
         schema.fieldNames().forEachRemaining(entityTypeName -> {
             ObjectNode entityType = (ObjectNode) schema.get(entityTypeName);
             this.parse(entityTypeName, entityType);
-            this.setCurrentEntityType(null);
+            this.getParserStack().debug();
         });
     }
 
@@ -61,12 +62,7 @@ public class Parser implements Parsable{
         return aom;
     }
 
-    public void setCurrentEntityType(EntityType entityType) {
-        currentEntityType = entityType;
+    public ParserStack getParserStack() {
+        return parserStack;
     }
-
-    public EntityType getCurrentEntityType() {
-        return currentEntityType;
-    }
-
 }
