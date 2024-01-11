@@ -78,11 +78,8 @@ public class JsonParserTest {
         assertNotNull(accommodationLinked.getAccountabilityType("AccoDetail").getAccountedType());
         AccountabilityType accoDetail = accommodationLinked.getAccountabilityType("AccoDetail");
         assertNotNull(accoDetail.getAccountedType());
-        AccountabilityType nestedAccoDetail = accoDetail.getAccountedType().getAccountabilityType("AccoDetail");
-        assertNotNull(nestedAccoDetail);
-
-        assertEquals("AccommodationLinked/AccoDetail", accoDetail.getAccountedType().getName());
-        assertEquals("AccoDetail", nestedAccoDetail.getAccountedType().getName());
+        assertTrue(accoDetail.hasProperty("labeled"));
+        assertEquals("AccoDetail", accoDetail.getAccountedType().getName());
     }
 
 }

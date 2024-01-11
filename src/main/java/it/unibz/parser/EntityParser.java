@@ -29,16 +29,11 @@ public class EntityParser implements Parsable{
             return;
         }
 
-        EntityType entityType = new EntityType(name);
-
-        EntityType currentEntityType = parser.getParserStack().peek();
-        parser.getParserStack().push(entityType);
-
         if (jsonObj.get("additionalProperties").isObject()) {
+            //Skip intermediate EntityType creation and link directly with label property
             if (jsonObj.get("additionalProperties").has("type")) {
                 parser.parse(buildScope("."), (ObjectNode) jsonObj.get("additionalProperties"));
             } else if (jsonObj.get("additionalProperties").has("$ref")) {
-                System.out.println("Parsing ref entity type");
                 String ref = jsonObj.get("additionalProperties").get("$ref").asText();
                 String refName = ref.replaceFirst("#/components/schemas/", "");
                 EntityType refEntityType = parser.getAom().getEntityType(refName);
@@ -48,12 +43,19 @@ public class EntityParser implements Parsable{
                     refEntityType = parser.getAom().getEntityType(refName);
                 }
                 //Add accountability type
-                System.out.println("[2] Setting ref: " + entityType.getName() + " -> " + refEntityType.getName() + " (labeled)");
+                System.out.println("[2] Setting ref: " + parser.getParserStack().peek().getName() + " -> " + refEntityType.getName() + " (labeled)");
                 AccountabilityType accountabilityType = new AccountabilityType(getRawName(refEntityType.getName()), refEntityType);
                 accountabilityType.addProperty("labeled");
-                entityType.addAccountabilityType(accountabilityType);
+                parser.getParserStack().peek().addAccountabilityType(accountabilityType);
             }
+
+            return;
         }
+
+        EntityType entityType = new EntityType(name);
+
+        EntityType currentEntityType = parser.getParserStack().peek();
+        parser.getParserStack().push(entityType);
 
         if (currentEntityType == null)
             parser.getAom().addEntityType(entityType);
