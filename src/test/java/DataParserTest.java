@@ -452,7 +452,7 @@ public class DataParserTest {
 
 
     @Test
-    public void parseNestedPrimitiveAccountability() throws AOMException {
+    public void parseNestedAccountability() throws AOMException {
         Entity event = events.get(0);
         Entity locationInfo = event.getAccountability("LocationInfo").getAccountedEntity();
         Entity tvInfo = locationInfo.getAccountability("TvInfo").getAccountedEntity();
@@ -471,6 +471,7 @@ public class DataParserTest {
     public void parseNestedEntityAccountabilityMap() throws AOMException {
         Entity event = events.get(0);
         Entity eventBooking = event.getAccountability("EventBooking").getAccountedEntity();
+        System.out.println(eventBooking.accountabilities);
         Entity bookingUrlDe = eventBooking.getAccountability("BookingUrl", "de").getAccountedEntity();
         assertEquals(bookingUrlDe.getProperty("Url"), "https://mysuedtirol.info/de/veranstaltungen?eventid=BFEB2DDB0FD54AC9BC040053A5514A92");
 

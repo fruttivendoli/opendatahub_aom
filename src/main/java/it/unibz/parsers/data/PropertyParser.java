@@ -19,9 +19,11 @@ public class PropertyParser {
 
     public void parse(Entity parent, String key, JsonNode value) throws AOMException {
         PropertyType propertyType = parent.getType().getPropertyType(key);
-        if(propertyType == null)
-            // todo: see if this still exists later
+        if(propertyType == null) {
+            System.out.println("WARNING: property type " + key + " not found in entity type " + parent.getType().getName());
+            System.out.println("WARNING: skipping property " + key + " with value " + value);
             return;
+        }
         parent.setProperty(key, parseJsonNodeToType(propertyType, value));
     }
 

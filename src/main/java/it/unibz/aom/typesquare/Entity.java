@@ -14,7 +14,7 @@ import java.util.Map;
 public class Entity {
     private final EntityType type;
     private final Map<String, Property> properties;
-    private final Map<AccountabilityKey, Accountability> accountabilities;
+    public final Map<AccountabilityKey, Accountability> accountabilities;
 
     public Entity(EntityType type) {
         this.type = type;
@@ -96,7 +96,9 @@ public class Entity {
     }
 
     public Object getProperty(String name) {
-        return properties.get(name).getValue();
+        if(properties.containsKey(name))
+            return properties.get(name).getValue();
+        return null;
     }
 
     public EntityType getType() {

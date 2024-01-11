@@ -52,7 +52,7 @@ public class EntityParser implements SchemaParsable {
                 }
                 //Add accountability type
                 System.out.println("[2] Setting ref: " + currentEntityType.getName() + " -> " + refEntityType.getName() + " (labeled)");
-                AccountabilityType accountabilityType = new AccountabilityType(getRawName(refEntityType.getName()), refEntityType);
+                AccountabilityType accountabilityType = new AccountabilityType(getRawName(name), refEntityType);
                 accountabilityType.setLabeled(true);
                 currentEntityType.addAccountabilityType(accountabilityType);
             }

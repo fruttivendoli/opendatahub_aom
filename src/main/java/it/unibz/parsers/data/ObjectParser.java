@@ -26,19 +26,27 @@ public class ObjectParser {
         objectNode.fields().forEachRemaining(field -> {
             try {
                 EntityType entityType = parent.getType();
+                System.out.println(field.getKey());
                 if (entityType.getAccountabilityType(field.getKey()) != null) {
                     AccountabilityType accountabilityType = entityType.getAccountabilityType(field.getKey());
                     EntityType childType = entityType.getAccountabilityType(field.getKey()).getAccountedType();
                     if(accountabilityType.isLabeled()) {
-                        System.out.println("Is Labeled " + field.getKey());
                         field.getValue().fields().forEachRemaining(labelledField -> {
                             Entity child = childType.create();
+                            if(labelledField.getValue().isObject())
+                                this.parse(child, labelledField.getValue());
+                            else {
+                                try {
+                                    propertyParser.parse(child, "_", labelledField.getValue()); //todo: make this better
+                                } catch (AOMException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
                             try {
                                 parent.setAccountability(field.getKey(), labelledField.getKey(), child); // todo: array hashmap ???
                             } catch (AOMException e) {
                                 throw new RuntimeException(e);
                             }
-                            this.parse(child, labelledField.getValue());
                         });
 
                     } else {
