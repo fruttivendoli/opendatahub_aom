@@ -16,6 +16,7 @@ public class SchemaParser implements SchemaParsable {
     EntityParser entityParser;
     PropertyParser propertyParser;
     ArrayParser arrayParser;
+    RefParser refParser;
 
     public SchemaParser(ObjectNode swagger) {
         String title = swagger.get("info").get("title").asText();
@@ -29,6 +30,7 @@ public class SchemaParser implements SchemaParsable {
         entityParser = new EntityParser(this);
         propertyParser = new PropertyParser(this);
         arrayParser = new ArrayParser(this);
+        refParser = new RefParser(this);
 
         schema.fieldNames().forEachRemaining(entityTypeName -> {
             ObjectNode entityType = (ObjectNode) schema.get(entityTypeName);
@@ -93,31 +95,15 @@ public class SchemaParser implements SchemaParsable {
             return;
         }
 
+
         if (objectNode.has("$ref")) { //TODO: duplicated(1)
-            //Parse ref objects first
-            String ref = objectNode.get("$ref").asText();
-            String refName = ref.replaceFirst("#/components/schemas/", "");
-            parse(refName, null); //Parse ref in a possibly out of scope scenario
-            //Set ref
-            EntityType entityType = aom.getEntityType(refName);
-            System.out.println("[3] Setting ref: " + parserStack.peek().getName() + " -> " + refName);
-            parserStack.peek().addAccountabilityType(
-                    new AccountabilityType(
-                            getRawName(name),
-                            entityType
-                    )
-            );
-            return;
-        }
-
-        if (!objectNode.has("type"))
-            return;
-
-        if(objectNode.get("type").asText().equals("object")) {
+            System.out.println("Parsing ref: " + name);
+            refParser.parse(name, objectNode);
+        } else if(objectNode.has("type") && objectNode.get("type").asText().equals("object")) {
             entityParser.parse(name, objectNode);
-        } else if(objectNode.get("type").asText().equals("array")) {
+        } else if(objectNode.has("type") && objectNode.get("type").asText().equals("array")) {
             arrayParser.parse(name, objectNode);
-        } else {
+        } else if (objectNode.has("type")) {
             propertyParser.parse(name, objectNode);
         }
     }
