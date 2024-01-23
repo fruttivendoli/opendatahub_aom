@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class JsonFetcher extends Fetcher {
 
-    public ObjectNode fetchSwagger(String url) throws IOException {
+    public ObjectNode fetchJson(String url) throws IOException {
         //Fetch Swagger JSON from endpoint
         String jsonString = super.fetch(url);
 

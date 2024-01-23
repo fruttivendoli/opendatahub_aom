@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Entity {
     private final EntityType type;
@@ -125,5 +126,31 @@ public class Entity {
 
     public EntityType getType() {
         return type;
+    }
+
+    public void print(String title, String spacing) {
+        //Serialize properties
+        String _properties = properties.entrySet().stream().map(entry -> {
+            return spacing + "\t" + entry.getKey() + ": " + entry.getValue().getValue();
+        }).collect(Collectors.joining("\n"));
+
+        System.out.println(spacing + title + "{");
+        System.out.println(_properties);
+
+        for (Map.Entry<AccountabilityKey, Accountability> entry : accountabilities.entrySet()) {
+            if (entry.getValue() instanceof LabeledAccountability) {
+                for (Entity entity : entry.getValue().getAccountedEntities()) {
+                    if (entity != null)
+                        entity.print(((LabeledAccountability) entry.getValue()).getLabel(), spacing + "\t");
+                }
+            } else {
+                for (Entity entity : entry.getValue().getAccountedEntities()) {
+                    if (entity != null)
+                        entity.print("[" + type.getName() + "]", spacing + "\t");
+                }
+            }
+        }
+
+        System.out.println(spacing + "}");
     }
 }

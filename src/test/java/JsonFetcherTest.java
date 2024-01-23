@@ -12,7 +12,7 @@ public class JsonFetcherTest {
     public void testFetchSwagger() throws IOException {
         JsonFetcher jsonFetcher = new JsonFetcher();
 
-        ObjectNode swagger = jsonFetcher.fetchSwagger("https://petstore.swagger.io/v2/swagger.json");
+        ObjectNode swagger = jsonFetcher.fetchJson("https://petstore.swagger.io/v2/swagger.json");
 
         assertEquals("2.0", swagger.get("swagger").asText());
     }
