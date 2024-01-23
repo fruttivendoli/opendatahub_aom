@@ -27,7 +27,7 @@ public class ArrayParser implements SchemaParsable {
             String refName = ref.replaceFirst("#/components/schemas/", "");
             EntityType refEntityType = parser.getAom().getEntityType(refName);
             if (refEntityType == null) {
-                parser.parse(refName, null);
+                parser.parseOutOfScope(refName);
                 refEntityType = parser.getAom().getEntityType(refName);
             }
             AccountabilityType accountabilityType = new AccountabilityType(name, refEntityType);

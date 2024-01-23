@@ -41,13 +41,7 @@ public class SchemaParser implements SchemaParsable {
     @Override
     public void parse(String name, ObjectNode objectNode) {
 
-        if (objectNode == null) { //Only parse by name in a possibly completely different scope
-            parseOutOfScope(name);
-            return;
-        }
-
-
-        if (objectNode.has("$ref")) { //TODO: duplicated(1)
+        if (objectNode.has("$ref")) {
             System.out.println("Parsing ref: " + name);
             refParser.parse(name, objectNode);
         } else if(objectNode.has("type") && objectNode.get("type").asText().equals("object")) {
@@ -59,9 +53,16 @@ public class SchemaParser implements SchemaParsable {
         } else {
             System.out.println("Failed to parse " + name + " (unknown type)");
         }
+
     }
 
 
+    /**
+     * Parse a schema component that is out of scope.
+     * That means that the component may not be parsed yet.
+     * It may also be the case that some parent components are not parsed yet.
+     * @param name Name of the component to parse
+     */
     public void parseOutOfScope(String name) {
         System.out.println("Starting out-of-scope parsing of " + name);
 

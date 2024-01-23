@@ -19,7 +19,7 @@ public class RefParser implements SchemaParsable{
         //Parse ref objects first
         String ref = jsonObj.get("$ref").asText();
         String refName = ref.replaceFirst("#/components/schemas/", "");
-        parser.parse(refName, null); //Parse ref in a possibly out of scope scenario
+        parser.parseOutOfScope(refName); //Parse ref in a possibly out of scope scenario
         //Set ref
         EntityType entityType = parser.getAom().getEntityType(refName);
         System.out.println("[3] Setting ref: " + parser.getParserStack().peek().getName() + " -> " + refName);

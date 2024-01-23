@@ -47,7 +47,7 @@ public class EntityParser implements SchemaParsable {
                 EntityType refEntityType = parser.getAom().getEntityType(refName);
                 //Parse ref objects first
                 if (refEntityType == null) {
-                    parser.parse(refName, null);
+                    parser.parseOutOfScope(refName);
                     refEntityType = parser.getAom().getEntityType(refName);
                 }
                 //Add accountability type
