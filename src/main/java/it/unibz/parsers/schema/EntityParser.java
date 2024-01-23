@@ -16,32 +16,53 @@ public class EntityParser implements SchemaParsable {
 
     @Override
     public void parse(String name, ObjectNode jsonObj) {
+        //Check if entity type already exists
+        if (parser.getAom().getEntityType(name) != null) {
+            System.out.println("Entity type " + name + " already exists");
+            return;
+        }
+
         System.out.println("Parsing entity type: " + name);
 
-        EntityType entityType = new EntityType(name);
-        EntityType currentEntityType = parser.getParserStack().peek();
-        parser.getParserStack().push(entityType);
+        EntityType newEntityType = new EntityType(name);
+        EntityType recentEntityType = parser.getParserStack().peek();
+        parser.getParserStack().push(newEntityType);
 
+
+        //Parse properties
+        if (jsonObj.has("properties")) {
+            ObjectNode properties = (ObjectNode) jsonObj.get("properties");
+
+            properties.fieldNames().forEachRemaining(propertyName -> {
+                ObjectNode property = (ObjectNode) properties.get(propertyName);
+                parser.parse(buildScope(propertyName), property);
+            });
+        }
+
+
+        //Parse additional properties
         if (jsonObj.get("additionalProperties").isObject()) {
 
             if (jsonObj.get("additionalProperties").has("type")) {
                 if (jsonObj.get("additionalProperties").get("type").asText().equals("object")) {
                     parser.parse(name + "/_", (ObjectNode) jsonObj.get("additionalProperties"));
-                    System.out.println("[4] Setting ref: " + currentEntityType.getName() + " -> " + entityType.getName());
-                    AccountabilityType accountabilityType = new AccountabilityType(getRawName(name), entityType);
+                    System.out.println("[4] Setting ref: " + recentEntityType.getName() + " -> " + newEntityType.getName());
+                    AccountabilityType accountabilityType = new AccountabilityType(getRawName(name), newEntityType);
                     accountabilityType.setLabeled(true);
-                    currentEntityType.addAccountabilityType(accountabilityType);
+                    recentEntityType.addAccountabilityType(accountabilityType);
+
                 } else {
                     parser.parse(name + "/_", (ObjectNode) jsonObj.get("additionalProperties"));
 
-                    System.out.println("[4] Setting ref: " + currentEntityType.getName() + " -> " + entityType.getName() + " (labeled)");
-                    AccountabilityType accountabilityType = new AccountabilityType(getRawName(name), entityType);
+                    System.out.println("[4] Setting ref: " + recentEntityType.getName() + " -> " + newEntityType.getName() + " (labeled)");
+                    AccountabilityType accountabilityType = new AccountabilityType(getRawName(name), newEntityType);
                     accountabilityType.setLabeled(true);
-                    currentEntityType.addAccountabilityType(accountabilityType);
+                    recentEntityType.addAccountabilityType(accountabilityType);
 
-                    parser.getAom().addEntityType(entityType);
+                    parser.getAom().addEntityType(newEntityType);
                 }
-            } else if (jsonObj.get("additionalProperties").has("$ref")) { //TODO: duplicated (1)
+
+            } else if (jsonObj.get("additionalProperties").has("$ref")) {
                 String ref = jsonObj.get("additionalProperties").get("$ref").asText();
                 String refName = ref.replaceFirst("#/components/schemas/", "");
                 EntityType refEntityType = parser.getAom().getEntityType(refName);
@@ -51,40 +72,31 @@ public class EntityParser implements SchemaParsable {
                     refEntityType = parser.getAom().getEntityType(refName);
                 }
                 //Add accountability type
-                System.out.println("[2] Setting ref: " + currentEntityType.getName() + " -> " + refEntityType.getName() + " (labeled)");
+                System.out.println("[2] Setting ref: " + recentEntityType.getName() + " -> " + refEntityType.getName() + " (labeled)");
                 AccountabilityType accountabilityType = new AccountabilityType(getRawName(name), refEntityType);
                 accountabilityType.setLabeled(true);
-                currentEntityType.addAccountabilityType(accountabilityType);
+                recentEntityType.addAccountabilityType(accountabilityType);
             }
 
             parser.getParserStack().pop();
             return;
         }
 
-        if (currentEntityType == null)
-            parser.getAom().addEntityType(entityType);
+
+        //Add or link entity type
+        if (recentEntityType == null) //Entity type is at root level
+            parser.getAom().addEntityType(newEntityType);
         else{
-            System.out.println("[3] Setting ref: " + currentEntityType.getName() + " -> " + name);
-            currentEntityType.addAccountabilityType(
+            System.out.println("[3] Setting ref: " + recentEntityType.getName() + " -> " + name);
+            recentEntityType.addAccountabilityType(
                     new AccountabilityType(
                             getRawName(name),
-                            entityType
+                            newEntityType
                     )
             );
         }
 
-        if (!jsonObj.has("properties")) {
-            // todo: we need to fix in post
-            parser.getParserStack().pop();
-            return;
-        }
 
-        ObjectNode properties = (ObjectNode) jsonObj.get("properties");
-
-        properties.fieldNames().forEachRemaining(propertyName -> {
-            ObjectNode property = (ObjectNode) properties.get(propertyName);
-            parser.parse(buildScope(propertyName), property);
-        });
 
         parser.getParserStack().pop();
     }
